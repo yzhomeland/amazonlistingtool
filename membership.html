@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开通会员 | 亚马逊Listing智能优化</title>
+<style>
+  :root {
+    --orange: #FF9900;
+    --dark: #232F3E;
+    --light: #F5F5F5;
+    --white: #FFFFFF;
+    --text: #333333;
+    --sub: #666666;
+    --border: #E0E0E0;
+    --green: #4CAF50;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    background: var(--light);
+    line-height: 1.7;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+  /* Nav */
+  .topnav { background: var(--dark); position: sticky; top: 0; z-index: 100; }
+  .topnav .nav-inner {
+    max-width: 960px; margin: 0 auto; padding: 0 20px;
+    display: flex; align-items: center; height: 50px; justify-content: space-between;
+  }
+  .topnav .brand { color: white; font-weight: 700; text-decoration: none; font-size: 1em; }
+  .topnav .nav-links { display: flex; gap: 24px; align-items: center; }
+  .topnav .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9em; }
+  .topnav .nav-links a:hover { color: var(--orange); }
+
+  /* Page Hero */
+  .page-hero {
+    background: linear-gradient(135deg, #232F3E 0%, #37475A 100%);
+    color: white;
+    text-align: center;
+    padding: 50px 0;
+  }
+  .page-hero h1 { font-size: 1.8em; margin-bottom: 8px; }
+  .page-hero p { opacity: 0.8; }
+
+  /* Steps */
+  .steps-bar {
+    background: white;
+    padding: 28px 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .steps-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .step-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--dark);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9em;
+    flex-shrink: 0;
+  }
+  .step-num.done { background: var(--green); }
+  .step-num.active { background: var(--orange); color: #000; }
+  .step-text { font-size: 0.9em; }
+  .step-text strong { display: block; }
+  .step-text span { color: var(--sub); font-size: 0.85em; }
+
+  /* Plans */
+  .plans { padding: 50px 0 30px; text-align: center; }
+  .plans h2 { font-size: 1.5em; margin-bottom: 28px; }
+  .plan-cards { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .plan-card {
+    background: white;
+    border-radius: 12px;
+    padding: 36px 28px;
+    width: 280px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    text-align: left;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .plan-card:hover { transform: translateY(-4px); }
+  .plan-card.selected { border-color: var(--orange); box-shadow: 0 4px 24px rgba(255,153,0,0.2); }
+  .plan-card.recommended::before {
+    content: "推荐";
+    position: absolute;
+    top: -12px; right: 20px;
+    background: var(--orange);
+    color: #000;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 700;
+  }
+  .plan-card h3 { font-size: 1.2em; margin-bottom: 8px; }
+  .plan-card .price { font-size: 2.4em; font-weight: 800; color: var(--dark); margin: 10px 0 2px; }
+  .plan-card .price span { font-size: 0.4em; font-weight: 400; color: #888; }
+  .plan-card .desc { color: var(--sub); font-size: 0.9em; margin-bottom: 14px; }
+  .plan-card ul { list-style: none; font-size: 0.9em; }
+  .plan-card ul li { padding: 5px 0; border-bottom: 1px solid #f5f5f5; }
+  .plan-card ul li::before { content: "✓ "; color: var(--green); font-weight: 700; }
+  .plan-card .check { display: none; position: absolute; top: 16px; right: 20px; font-size: 1.4em; color: var(--orange); }
+  .plan-card.selected .check { display: block; }
+
+  /* Payment Section */
+  .payment { padding: 40px 0 50px; display: none; }
+  .payment.show { display: block; }
+  .payment h2 { text-align: center; font-size: 1.4em; margin-bottom: 24px; }
+  .pay-methods { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
+  .pay-method {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    cursor: pointer;
+    text-align: center;
+    min-width: 130px;
+    transition: border-color 0.2s;
+  }
+  .pay-method:hover { border-color: #aaa; }
+  .pay-method.active { border-color: var(--orange); background: #FFF8E1; }
+  .pay-method .pay-icon { font-size: 2em; margin-bottom: 6px; }
+  .pay-method .pay-name { font-weight: 600; font-size: 0.95em; }
+
+  .pay-detail {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    display: none;
+  }
+  .pay-detail.show { display: block; }
+  .pay-detail .qr-placeholder {
+    width: 220px; height: 220px;
+    margin: 0 auto 16px;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    background: #fafafa;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pay-detail .qr-placeholder:hover { border-color: var(--orange); }
+  .pay-detail .qr-placeholder img { width: 100%; height: 100%; object-fit: contain; }
+  .pay-detail .qr-placeholder .hint { font-size: 0.85em; color: #999; }
+  .pay-detail .amount { font-size: 2em; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .pay-detail .amount-label { color: var(--sub); font-size: 0.9em; margin-bottom: 20px; }
+  .pay-detail .bank-info {
+    text-align: left;
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+    font-size: 0.9em;
+    line-height: 2;
+  }
+  .pay-detail .bank-info strong { display: inline-block; width: 70px; }
+
+  /* Activation */
+  .activate {
+    background: #FFF8E1;
+    border: 1px solid #FFE0A0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    text-align: left;
+    font-size: 0.9em;
+  }
+  .activate h4 { margin-bottom: 8px; }
+  .activate ol { padding-left: 20px; }
+  .activate ol li { margin-bottom: 6px; }
+
+  .btn {
+    display: inline-block;
+    background: var(--orange);
+    color: #000;
+    padding: 12px 36px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn:hover { background: #e88a00; }
+  .btn:disabled { background: #ccc; cursor: not-allowed; }
+  .btn-large { padding: 16px 48px; font-size: 1.1em; }
+
+  /* FAQ */
+  .faq { padding: 50px 0; background: white; }
+  .faq h2 { text-align: center; font-size: 1.4em; margin-bottom: 28px; }
+  .faq-item { margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
+  .faq-item h4 { font-size: 1em; margin-bottom: 5px; }
+  .faq-item p { font-size: 0.9em; color: var(--sub); }
+
+  footer { text-align: center; padding: 24px 0; color: #999; font-size: 0.85em; }
+
+  @media (max-width: 640px) {
+    .plan-cards { flex-direction: column; align-items: center; }
+    .plan-card { width: 100%; max-width: 340px; }
+    .steps-row { flex-direction: column; align-items: center; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<header class="topnav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">Listing 智能优化</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="about.html">关于我</a>
+      <a href="dashboard.html">操作台</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="page-hero">
+  <div class="container">
+    <h1>选择适合你的方案</h1>
+    <p>前 30 名月度会员锁定 ¥79/月，满额后恢复 ¥129/月</p>
+  </div>
+</section>
+
+<!-- Steps -->
+<section class="steps-bar">
+  <div class="container">
+    <div class="steps-row">
+      <div class="step-item">
+        <div class="step-num active" id="stepNum1">1</div>
+        <div class="step-text"><strong>选择套餐</strong><span>挑选适合的方案</span></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" id="stepNum2">2</div>
+        <div class="step-text"><strong>完成支付</strong><span>微信/支付宝/银行卡</span></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" id="stepNum3">3</div>
+        <div class="step-text"><strong>发送截图激活</strong><span>添加微信获取登录权限</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Plans -->
+<section class="plans" id="planSection">
+  <div class="container">
+    <h2>选择套餐</h2>
+    <div class="plan-cards" id="planCards">
+      <div class="plan-card" data-plan="single" data-price="29" data-label="单次优化" onclick="selectPlan(this)">
+        <span class="check">✅</span>
+        <h3>🟢 单次优化</h3>
+        <div class="price">¥29<span>/次</span></div>
+        <p class="desc">适合想先试试效果的卖家</p>
+        <ul>
+          <li>标题优化 x1</li>
+          <li>五点描述优化 x1</li>
+          <li>后台关键词埋词 x1</li>
+          <li>关键词覆盖分析报告</li>
+          <li>3天内免费微调1次</li>
+        </ul>
+      </div>
+
+      <div class="plan-card recommended" data-plan="monthly" data-price="79" data-label="月度会员" onclick="selectPlan(this)">
+        <span class="check">✅</span>
+        <h3>🔶 月度会员</h3>
+        <div class="price">¥79<span>/月</span></div>
+        <p class="desc">稳定运营的卖家首选</p>
+        <ul>
+          <li>每月 5 次 Listing 全套优化</li>
+          <li>标题+五点+埋词全覆盖</li>
+          <li>竞品差评反向分析</li>
+          <li>A+ 页面文案撰写</li>
+          <li>主图/A+图分析建议</li>
+          <li>ABA关键词数据分析</li>
+          <li>不限次数免费微调</li>
+        </ul>
+      </div>
+
+      <div class="plan-card" data-plan="bulk" data-price="149" data-label="10次加量包" onclick="selectPlan(this)">
+        <span class="check">✅</span>
+        <h3>💎 10次加量包</h3>
+        <div class="price">¥149<span>/10次</span></div>
+        <p class="desc">月度会员超出额度后使用</p>
+        <ul>
+          <li>限月度会员购买</li>
+          <li>与会员权益相同</li>
+          <li>按次计费不浪费</li>
+          <li>永久有效不过期</li>
+          <li>单次仅 ¥14.9</li>
+        </ul>
+      </div>
+    </div>
+
+    <button class="btn btn-large" id="btnConfirmPlan" onclick="confirmPlan()" style="margin-top:28px;">确认套餐，去支付 →</button>
+  </div>
+</section>
+
+<!-- Payment -->
+<section class="payment" id="paymentSection">
+  <div class="container">
+    <h2>选择支付方式</h2>
+    <div class="pay-methods">
+      <div class="pay-method active" data-method="wechat" onclick="selectPayMethod(this)">
+        <div class="pay-icon">💚</div>
+        <div class="pay-name">微信支付</div>
+      </div>
+      <div class="pay-method" data-method="alipay" onclick="selectPayMethod(this)">
+        <div class="pay-icon">💙</div>
+        <div class="pay-name">支付宝</div>
+      </div>
+      <div class="pay-method" data-method="bank" onclick="selectPayMethod(this)">
+        <div class="pay-icon">🏦</div>
+        <div class="pay-name">银行卡转账</div>
+      </div>
+    </div>
+
+    <!-- WeChat Pay -->
+    <div class="pay-detail show" id="payWechat">
+      <div class="amount" id="payAmountWx">¥79</div>
+      <div class="amount-label" id="payLabelWx">月度会员</div>
+      <div class="qr-placeholder" id="qrWechat">
+        <img src="微信收款.jpg" alt="微信收款码" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='flex';">
+        <span class="fallback hint" style="display:none;">📷 点击上传微信收款码<br><small>请替换为你的真实收款码</small></span>
+      </div>
+      <p style="font-size:0.85em;color:var(--sub);">打开微信扫一扫付款</p>
+    </div>
+
+    <!-- Alipay -->
+    <div class="pay-detail" id="payAlipay">
+      <div class="amount" id="payAmountAli">¥79</div>
+      <div class="amount-label" id="payLabelAli">月度会员</div>
+      <div class="qr-placeholder" id="qrAlipay">
+        <img src="支付宝收款.jpg" alt="支付宝收款码" style="width:100%;height:100%;object-fit:contain;" onerror="this.style.display='none';this.parentElement.querySelector('.fallback').style.display='flex';">
+        <span class="fallback hint" style="display:none;">📷 点击上传支付宝收款码<br><small>请替换为你的真实收款码</small></span>
+      </div>
+      <p style="font-size:0.85em;color:var(--sub);">打开支付宝扫一扫付款</p>
+    </div>
+
+    <!-- Bank Transfer -->
+    <div class="pay-detail" id="payBank">
+      <div class="amount" id="payAmountBank">¥79</div>
+      <div class="amount-label" id="payLabelBank">月度会员</div>
+      <div class="bank-info">
+        <p><strong>收款人：</strong>杨震</p>
+        <p><strong>银行卡号：</strong>6214 8318 6013 9937</p>
+        <p><strong>开户行：</strong>招商银行</p>
+        <p style="color:#999;font-size:0.85em;margin-top:10px;">⚠ 转账时请备注你的用户名或微信号，方便核对</p>
+      </div>
+    </div>
+
+    <!-- Activation -->
+    <div class="activate">
+      <h4>📱 付款后如何激活？</h4>
+      <ol>
+        <li>完成上述支付</li>
+        <li><strong>截图付款凭证</strong>（包含交易流水号）</li>
+        <li>添加微信 <strong>young_yzd</strong>，发送付款截图</li>
+        <li>发送暗号：<strong id="activateCode">月会员-79</strong></li>
+        <li>收到<strong>激活码</strong>后，在下方输入即可立即开通</li>
+      </ol>
+
+      <div style="margin-top:18px;padding-top:16px;border-top:1px dashed #ddd;">
+        <label style="font-weight:600;font-size:0.9em;">🔑 输入激活码</label>
+        <div style="display:flex;gap:10px;margin-top:6px;">
+          <input type="text" id="activateCodeInput" placeholder="AMZ-XXXXXXXXXXXXXXXX" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:6px;font-size:0.95em;font-family:monospace;">
+          <button class="btn" style="width:auto;white-space:nowrap;" onclick="activateSubscription()">激活</button>
+        </div>
+        <p id="activateMsg" style="margin-top:8px;font-size:0.85em;display:none;"></p>
+        <p style="font-size:0.8em;color:#999;margin-top:4px;">激活后刷新操作台页面即可使用全部功能</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <h2>常见问题</h2>
+    <div class="faq-item">
+      <h4>付费后多久能开通？</h4>
+      <p>一般 10 分钟内处理。工作时间（9:00-22:00）即时回复，深夜付款次日早上处理。</p>
+    </div>
+    <div class="faq-item">
+      <h4>如果优化效果不满意？</h4>
+      <p>月度会员支持不限次数免费微调，直到满意。如果完全不符合预期，首月可申请全额退款。</p>
+    </div>
+    <div class="faq-item">
+      <h4>月度会员可以随时取消吗？</h4>
+      <p>可以。月初付费后本月有效，下月不续费自动失效，不会自动扣款。</p>
+    </div>
+    <div class="faq-item">
+      <h4>一个账号可以多个人用吗？</h4>
+      <p>月度会员支持绑定 2 个浏览器（比如你台式机+笔记本），但不支持团队共享。如果需要多人使用，请联系微信获取团队报价。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>联系微信：young_yzd | 邮箱：253582669@qq.com</p>
+    <p>© 2025 亚马逊Listing智能优化服务</p>
+  </div>
+</footer>
+
+<script>
+// ============ LOGIN CHECK ============
+const currentUser = localStorage.getItem('amz_current_user');
+const loggedIn = localStorage.getItem('amz_logged_in');
+if (!currentUser || loggedIn !== '1') {
+  // Not registered/logged in, redirect to register
+  if (confirm('请先注册账号再开通会员。\n\n点击确定前往注册页面。')) {
+    window.location.href = 'register.html';
+  }
+}
+
+// ============================================
+// ⚠️ 部署后把下面这行换成你的 Worker 地址
+// ============================================
+const API_BASE = 'https://amz-listing-api.a253582669.workers.dev';
+
+async function activateSubscription() {
+  const code = document.getElementById('activateCodeInput').value.trim();
+  const msgEl = document.getElementById('activateMsg');
+  const user = localStorage.getItem('amz_current_user');
+
+  if (!user) {
+    msgEl.textContent = '请先注册账号';
+    msgEl.style.color = '#e74c3c';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  if (!code) {
+    msgEl.textContent = '请输入激活码';
+    msgEl.style.color = '#e74c3c';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  if (!code.startsWith('AMZ-')) {
+    msgEl.textContent = '激活码格式不正确，请检查后重试';
+    msgEl.style.color = '#e74c3c';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  try {
+    const resp = await fetch(API_BASE + '/api/activate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, activationCode: code })
+    });
+    const data = await resp.json();
+
+    if (!data.success) {
+      msgEl.textContent = data.error || '激活失败，请检查激活码';
+      msgEl.style.color = '#e74c3c';
+      msgEl.style.display = 'block';
+      return;
+    }
+
+    localStorage.setItem('amz_sub_until', data.subscriptionUntil);
+    msgEl.textContent = '✅ 激活成功！订阅剩余 ' + data.daysLeft + ' 天，现在可前往操作台使用全部功能。';
+    msgEl.style.color = '#4CAF50';
+    msgEl.style.display = 'block';
+    document.getElementById('activateCodeInput').value = '';
+
+  } catch (err) {
+    msgEl.textContent = '网络错误：' + err.message;
+    msgEl.style.color = '#e74c3c';
+    msgEl.style.display = 'block';
+  }
+}
+
+// ============ PLAN SELECTION ============
+let selectedPlan = 'monthly';
+let selectedPrice = '79';
+let selectedLabel = '月度会员';
+let selectedMethod = 'wechat';
+
+function selectPlan(el) {
+  document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPlan = el.dataset.plan;
+  selectedPrice = el.dataset.price;
+  selectedLabel = el.dataset.label;
+}
+
+function confirmPlan() {
+  if (!currentUser) {
+    alert('请先注册账号');
+    window.location.href = 'register.html';
+    return;
+  }
+  if (!selectedPlan) { alert('请先选择一个套餐'); return; }
+
+  document.getElementById('paymentSection').classList.add('show');
+  document.getElementById('paymentSection').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('stepNum1').classList.add('done');
+  document.getElementById('stepNum2').classList.add('active');
+  document.querySelectorAll('[id^="payAmount"]').forEach(el => el.textContent = '¥' + selectedPrice);
+  document.querySelectorAll('[id^="payLabel"]').forEach(el => el.textContent = selectedLabel);
+  document.getElementById('activateCode').textContent = selectedLabel + '-' + selectedPrice;
+}
+
+function selectPayMethod(el) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  selectedMethod = el.dataset.method;
+  document.querySelectorAll('.pay-detail').forEach(d => d.classList.remove('show'));
+  const map = { wechat: 'payWechat', alipay: 'payAlipay', bank: 'payBank' };
+  document.getElementById(map[selectedMethod]).classList.add('show');
+}
+
+// Preselect monthly plan
+document.querySelector('[data-plan="monthly"]').classList.add('selected');
+</script>
+
+</body>
+</html>
