@@ -25,31 +25,6 @@
     line-height: 1.6;
   }
 
-  /* LOGIN OVERLAY */
-  .login-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999;
-  }
-  .login-box {
-    background: white; border-radius: 12px; padding: 40px 32px;
-    width: 400px; max-width: 90vw; text-align: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-  }
-  .login-box h2 { margin-bottom: 4px; font-size: 1.4em; }
-  .login-box .sub { color: var(--sub); font-size: 0.9em; margin-bottom: 20px; }
-  .login-box input {
-    width: 100%; padding: 12px; border: 2px solid var(--border);
-    border-radius: 6px; font-size: 1em; margin-bottom: 12px; outline: none;
-  }
-  .login-box input:focus { border-color: var(--orange); }
-  .login-box .btn {
-    width: 100%; padding: 12px; background: var(--orange); color: #000;
-    border: none; border-radius: 6px; font-size: 1em; font-weight: 700; cursor: pointer;
-  }
-  .login-box .hint { font-size: 0.8em; color: #999; margin-top: 12px; }
-
   /* MAIN LAYOUT */
   .app { display: flex; min-height: 100vh; }
 
@@ -59,7 +34,6 @@
     display: flex; flex-direction: column;
   }
   .sidebar .logo { padding: 20px 18px; font-weight: 700; font-size: 1em; border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .sidebar .user-info { padding: 12px 18px; font-size: 0.82em; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); }
   .sidebar nav { flex: 1; padding: 8px 0; overflow-y: auto; }
   .sidebar nav a {
     display: flex; align-items: center; gap: 8px; padding: 11px 18px;
@@ -194,7 +168,7 @@
     .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
     .sidebar nav { display: flex; overflow-x: auto; }
     .sidebar nav a { white-space: nowrap; font-size: 0.8em; padding: 10px 12px; }
-    .sidebar .logo, .sidebar .user-info, .sidebar .bottom-links { display: none; }
+    .sidebar .logo, .sidebar .bottom-links { display: none; }
     .content { padding: 12px; }
     .img-slot { width: 80px; height: 80px; }
   }
@@ -202,25 +176,11 @@
 </head>
 <body>
 
-<!-- Login -->
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-box">
-    <h2>🔐 登录操作台</h2>
-    <p class="sub">输入你的账号密码</p>
-    <input type="text" id="loginUser" placeholder="用户名" autocomplete="username">
-    <input type="password" id="loginPass" placeholder="密码" autocomplete="current-password">
-    <div id="loginError" style="color:var(--red);font-size:0.85em;margin-bottom:10px;display:none;"></div>
-    <button class="btn" onclick="doLogin()">进入操作台</button>
-    <p class="hint" style="margin-bottom:4px;">没有账号？<a href="register.html" style="color:var(--orange);">立即注册</a></p>
-    <p class="hint">需要续费？<a href="membership.html" style="color:var(--orange);">开通/续费会员</a></p>
-  </div>
-</div>
-
 <div class="app">
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="logo">⚡ Listing 优化操作台</div>
-    <div class="user-info" id="userInfo">已登录</div>
+
     <nav>
       <a href="#" class="active" data-tab="tab-all" onclick="switchTab('tab-all',this)">📦 全Listing优化</a>
       <a href="#" data-tab="tab-title" onclick="switchTab('tab-title',this)">📝 标题优化</a>
@@ -234,18 +194,13 @@
     </nav>
     <div class="bottom-links">
       <a href="index.html">← 返回首页</a>
-      <a href="membership.html">💳 开通/续费会员</a>
-      <a href="register.html">📝 注册新账号</a>
     </div>
   </aside>
 
   <!-- Main -->
   <main class="main">
     <div class="topbar">
-      <span id="topbarSub" style="font-size:0.85em;color:var(--sub);"></span>
       <span class="api-status"><span class="dot on" id="apiDot"></span><span id="apiStatusText">API 已配置</span></span>
-      <span id="topbarUser" style="font-weight:600;font-size:0.9em;"></span>
-      <button class="btn btn-outline btn-sm" onclick="doLogout()">退出</button>
     </div>
     <div class="content">
 
@@ -548,11 +503,6 @@
 </div>
 
 <script>
-// ============================================
-// ⚠️ 部署后把下面这行换成你的 Worker 地址
-// ============================================
-const API_BASE = 'https://amz-listing-api.a253582669.workers.dev';
-
 // ============ CONFIG ============
 
 // ============ IMAGE UPLOAD SETUP ============
@@ -605,172 +555,6 @@ function getImagesBase64(groupId) {
   const imgs = [];
   container.querySelectorAll('.img-slot.has-img img').forEach(img => imgs.push(img.src));
   return imgs;
-}
-
-// ============ LOGIN ============
-async function doLogin() {
-  const user = document.getElementById('loginUser').value.trim();
-  const pass = document.getElementById('loginPass').value.trim();
-  const errEl = document.getElementById('loginError');
-
-  if (!user || !pass) {
-    errEl.textContent = '请输入用户名和密码';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  // 调用 API 登录
-  try {
-    const resp = await fetch(API_BASE + '/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: user, password: pass })
-    });
-    const data = await resp.json();
-
-    if (!data.success) {
-      errEl.textContent = data.error || '用户名或密码错误';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    // Check subscription
-    if (data.expired) {
-      errEl.innerHTML = '订阅已过期或未开通。请<a href="membership.html" style="color:#FF9900;">续费会员</a>后使用。<br><small>如已续费并获得激活码，请在下方输入激活：</small>';
-      errEl.style.display = 'block';
-      showActivationInput();
-      return;
-    }
-
-    // Valid login
-    localStorage.setItem('amz_current_user', user);
-    localStorage.setItem('amz_logged_in', '1');
-    localStorage.setItem('amz_sub_until', data.user.subscriptionUntil);
-    hideLogin();
-    updateApiDot();
-    updateSubscriptionDisplay(data.user);
-  } catch (err) {
-    errEl.textContent = '无法连接到服务器，请检查网络';
-    errEl.style.display = 'block';
-  }
-}
-
-function showActivationInput() {
-  // Add activation code input to login box if not already there
-  if (document.getElementById('loginActivateCode')) return;
-  const loginBox = document.querySelector('.login-box');
-  const btnEl = loginBox.querySelector('.btn');
-  const div = document.createElement('div');
-  div.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid #eee;';
-  div.innerHTML = `
-    <input type="text" id="loginActivateCode" placeholder="输入激活码 AMZ-..." style="font-family:monospace;font-size:0.88em;">
-    <button class="btn" onclick="activateFromLogin()" style="font-size:0.88em;padding:8px;">激活</button>
-    <p id="loginActivateMsg" style="font-size:0.8em;margin-top:6px;display:none;"></p>
-  `;
-  loginBox.insertBefore(div, btnEl.nextSibling);
-}
-
-const SECRET_SALT = 'amz_op2025_secret_key';
-
-async function activateFromLogin() {
-  const code = document.getElementById('loginActivateCode').value.trim();
-  const msgEl = document.getElementById('loginActivateMsg');
-  const user = document.getElementById('loginUser').value.trim();
-
-  if (!user) {
-    msgEl.textContent = '请先输入用户名';
-    msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
-    return;
-  }
-
-  if (!code.startsWith('AMZ-')) {
-    msgEl.textContent = '激活码格式不正确';
-    msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
-    return;
-  }
-
-  try {
-    const resp = await fetch(API_BASE + '/api/activate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: user, activationCode: code })
-    });
-    const data = await resp.json();
-
-    if (!data.success) {
-      msgEl.textContent = data.error || '激活失败';
-      msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
-      return;
-    }
-
-    msgEl.textContent = '✅ 激活成功！剩余 ' + data.daysLeft + ' 天，请重新点击登录';
-    msgEl.style.color = '#4CAF50'; msgEl.style.display = 'block';
-    document.getElementById('loginActivateCode').value = '';
-  } catch (err) {
-    msgEl.textContent = '网络错误，请重试';
-    msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
-  }
-}
-
-function hideLogin() { document.getElementById('loginOverlay').style.display = 'none'; }
-
-async function checkLogin() {
-  const user = localStorage.getItem('amz_current_user');
-  const loggedIn = localStorage.getItem('amz_logged_in');
-
-  if (loggedIn === '1' && user) {
-    // 向 API 验证订阅状态
-    try {
-      const resp = await fetch(API_BASE + '/api/user-info?username=' + encodeURIComponent(user));
-      const data = await resp.json();
-      if (data.success && data.user && !data.user.expired) {
-        hideLogin();
-        updateApiDot();
-        loadSettings();
-        updateSubscriptionDisplay(data.user);
-        return;
-      }
-    } catch (e) {
-      // API 不通时用本地缓存的订阅时间兜底
-      const subUntil = localStorage.getItem('amz_sub_until');
-      if (subUntil && new Date(subUntil) >= new Date()) {
-        hideLogin();
-        updateApiDot();
-        loadSettings();
-        return;
-      }
-    }
-  }
-  // Not logged in or expired
-  document.getElementById('loginOverlay').style.display = 'flex';
-}
-
-function doLogout() {
-  localStorage.removeItem('amz_logged_in');
-  document.getElementById('loginOverlay').style.display = 'flex';
-}
-
-function updateSubscriptionDisplay(userData) {
-  const userInfo = document.getElementById('userInfo');
-  const topbarSub = document.getElementById('topbarSub');
-  const topbarUser = document.getElementById('topbarUser');
-  const user = localStorage.getItem('amz_current_user') || '';
-
-  if (topbarUser) topbarUser.textContent = '👤 ' + user;
-
-  if (userData) {
-    const daysLeft = userData.daysLeft || 0;
-    const subUntil = userData.subscriptionUntil ? new Date(userData.subscriptionUntil) : null;
-    const status = daysLeft <= 3 ? '⚠️' : '✅';
-    if (userInfo && subUntil) {
-      userInfo.textContent = status + ' 订阅剩余 ' + daysLeft + ' 天 | 到期 ' + subUntil.toLocaleDateString('zh-CN');
-      userInfo.style.color = daysLeft <= 3 ? '#ff9800' : 'rgba(255,255,255,0.5)';
-    }
-    if (topbarSub) {
-      topbarSub.textContent = status + ' 剩余 ' + daysLeft + ' 天';
-      topbarSub.style.color = daysLeft <= 3 ? '#ff9800' : '#4CAF50';
-    }
-  }
 }
 
 function updateApiDot() {
@@ -1221,7 +1005,7 @@ if (titleCurEl) {
 }
 
 // ============ INIT ============
-checkLogin();
+updateApiDot(); loadSettings();
 </script>
 </body>
 </html>

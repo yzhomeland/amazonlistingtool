@@ -101,48 +101,6 @@
   .about-stat .num { font-size: 1.8em; font-weight: 800; color: var(--dark); }
   .about-stat .label { font-size: 0.85em; color: var(--sub); }
 
-  /* Pricing Cards */
-  .pricing-section { padding: 50px 0 30px; text-align: center; }
-  .pricing-section h2 { font-size: 1.6em; margin-bottom: 30px; }
-  .cards { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
-  .card {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 36px 28px;
-    width: 280px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-    text-align: left;
-    border: 2px solid transparent;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .card:hover { transform: translateY(-4px); }
-  .card.featured {
-    border-color: var(--orange);
-    position: relative;
-  }
-  .card.featured::before {
-    content: "推荐";
-    position: absolute;
-    top: -12px;
-    right: 20px;
-    background: var(--orange);
-    color: #000;
-    padding: 4px 14px;
-    border-radius: 4px;
-    font-size: 0.85em;
-    font-weight: 700;
-  }
-  .card h3 { font-size: 1.2em; margin-bottom: 8px; }
-  .card .price { font-size: 2.2em; font-weight: 800; color: #232F3E; margin: 12px 0 4px; }
-  .card .price span { font-size: 0.45em; font-weight: 400; color: #888; }
-  .card .desc { color: var(--sub); font-size: 0.9em; margin-bottom: 16px; }
-  .card ul { list-style: none; }
-  .card ul li {
-    padding: 6px 0;
-    font-size: 0.9em;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .card ul li::before { content: "✓ "; color: #4CAF50; font-weight: 700; }
   .btn {
     display: inline-block;
     background: var(--orange);
@@ -160,12 +118,6 @@
     text-align: center;
   }
   .btn:hover { background: #e88a00; }
-  .btn-outline {
-    background: white;
-    border: 2px solid var(--orange);
-    color: #232F3E;
-  }
-  .btn-outline:hover { background: #FFF5E6; }
 
   /* Service Detail */
   .services { padding: 40px 0 50px; }
@@ -261,8 +213,6 @@
 
   @media (max-width: 640px) {
     .hero h1 { font-size: 1.5em; }
-    .cards { flex-direction: column; align-items: center; }
-    .card { width: 100%; max-width: 340px; }
     .steps { flex-direction: column; align-items: center; }
   }
 </style>
@@ -275,7 +225,6 @@
     <a href="#" class="brand">Listing 智能优化</a>
     <div class="nav-links">
       <a href="about.html">关于我</a>
-      <a href="membership.html">开通会员</a>
       <a href="dashboard.html" class="nav-cta">进入操作台</a>
     </div>
   </div>
@@ -304,57 +253,6 @@
         </p>
         <a href="about.html" style="color:var(--orange);font-weight:600;text-decoration:none;">查看完整故事 →</a>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- Pricing -->
-<section class="pricing-section">
-  <div class="container">
-    <h2>选择适合你的方案</h2>
-    <div class="cards">
-
-      <div class="card">
-        <h3>🟢 单次优化</h3>
-        <div class="price">¥29<span>/次</span></div>
-        <p class="desc">适合想先试试效果的卖家</p>
-        <ul>
-          <li>标题优化 x1</li>
-          <li>五点描述优化 x1</li>
-          <li>后台关键词埋词 x1</li>
-          <li>关键词覆盖分析报告</li>
-          <li>3天内免费微调1次</li>
-        </ul>
-        <button class="btn-outline btn" onclick="goToMembership()">立即下单</button>
-      </div>
-
-      <div class="card featured">
-        <h3>🔶 月度会员</h3>
-        <div class="price">¥79<span>/月</span></div>
-        <p class="desc">稳定运营的卖家首选</p>
-        <ul>
-          <li>每月 5 次 Listing 全套优化</li>
-          <li>标题+五点+埋词全覆盖</li>
-          <li>竞品差评反向分析</li>
-          <li>A+ 页面文案撰写</li>
-          <li>不限次数免费微调</li>
-        </ul>
-        <button class="btn" onclick="goToMembership()">加入会员</button>
-      </div>
-
-      <div class="card">
-        <h3>💎 超额加量包</h3>
-        <div class="price">¥19<span>/次</span></div>
-        <p class="desc">月会员超出额度后使用</p>
-        <ul>
-          <li>限月度会员购买</li>
-          <li>与会员权益相同</li>
-          <li>按次计费不浪费</li>
-          <li>10次包更优惠 ¥149</li>
-        </ul>
-        <button class="btn-outline btn" onclick="goToMembership()">购买加量包</button>
-      </div>
-
     </div>
   </div>
 </section>
@@ -481,7 +379,7 @@
     </div>
     <div class="faq-item">
       <h4>如果我对结果不满意怎么办？</h4>
-      <p>月度会员支持不限次数微调。单次订单可在交付后 3 天内免费修改 1 次。如果完全不符合预期，我们承诺无条件退款。</p>
+      <p>AI 生成的结果支持不限次数微调，直到你满意为止。每次优化基于最新的产品信息和市场数据。</p>
     </div>
     <div class="faq-item">
       <h4>支持哪些语言和站点？</h4>
@@ -494,8 +392,8 @@
 <section class="cta">
   <div class="container">
     <h2>让你的 Listing 被算法看见</h2>
-    <p>前 30 名月度会员锁定 ¥79/月，满额后恢复 ¥129/月</p>
-    <button class="btn" onclick="goToMembership()">现在就优化你的 Listing</button>
+    <p>基于 A9/A10 算法逻辑，AI 驱动 + 人工复核，帮你写出能排名的 Listing</p>
+    <a href="dashboard.html" class="btn">进入操作台</a>
   </div>
 </section>
 
@@ -506,11 +404,6 @@
   </div>
 </footer>
 
-<script>
-function goToMembership() {
-  window.location.href = 'membership.html';
-}
-</script>
 
 </body>
 </html>
