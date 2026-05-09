@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>操作台 | 亚马逊 Listing 智能优化</title>
+<style>
+  :root {
+    --orange: #FF9900;
+    --dark: #232F3E;
+    --light: #F5F5F5;
+    --white: #FFFFFF;
+    --text: #333333;
+    --sub: #666666;
+    --border: #E0E0E0;
+    --green: #4CAF50;
+    --red: #e74c3c;
+    --blue: #2196F3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    background: var(--light);
+    line-height: 1.6;
+  }
+
+  /* LOGIN OVERLAY */
+  .login-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .login-box {
+    background: white; border-radius: 12px; padding: 40px 32px;
+    width: 400px; max-width: 90vw; text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+  .login-box h2 { margin-bottom: 4px; font-size: 1.4em; }
+  .login-box .sub { color: var(--sub); font-size: 0.9em; margin-bottom: 20px; }
+  .login-box input {
+    width: 100%; padding: 12px; border: 2px solid var(--border);
+    border-radius: 6px; font-size: 1em; margin-bottom: 12px; outline: none;
+  }
+  .login-box input:focus { border-color: var(--orange); }
+  .login-box .btn {
+    width: 100%; padding: 12px; background: var(--orange); color: #000;
+    border: none; border-radius: 6px; font-size: 1em; font-weight: 700; cursor: pointer;
+  }
+  .login-box .hint { font-size: 0.8em; color: #999; margin-top: 12px; }
+
+  /* MAIN LAYOUT */
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 230px; background: var(--dark); color: white; flex-shrink: 0;
+    display: flex; flex-direction: column;
+  }
+  .sidebar .logo { padding: 20px 18px; font-weight: 700; font-size: 1em; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar .user-info { padding: 12px 18px; font-size: 0.82em; color: rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar nav { flex: 1; padding: 8px 0; overflow-y: auto; }
+  .sidebar nav a {
+    display: flex; align-items: center; gap: 8px; padding: 11px 18px;
+    color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9em;
+    transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  .sidebar nav a:hover { background: rgba(255,255,255,0.05); color: white; }
+  .sidebar nav a.active { background: rgba(255,153,0,0.12); color: var(--orange); border-left-color: var(--orange); }
+  .sidebar .bottom-links { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .sidebar .bottom-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.8em; display: block; margin-bottom: 6px; }
+  .sidebar .bottom-links a:hover { color: white; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+  .topbar {
+    background: white; padding: 12px 28px; display: flex;
+    justify-content: flex-end; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border); font-size: 0.88em;
+  }
+  .topbar .api-status { display: flex; align-items: center; gap: 6px; color: var(--sub); }
+  .topbar .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.on { background: var(--green); }
+  .dot.off { background: var(--red); }
+  .content { padding: 24px; flex: 1; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .form-card {
+    background: white; border-radius: 10px; padding: 28px;
+    margin-bottom: 22px; box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+  .form-card h3 { font-size: 1.1em; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .form-card .subtitle { color: var(--sub); font-size: 0.85em; margin-bottom: 18px; }
+  .form-row { margin-bottom: 16px; }
+  .form-row label { display: block; font-weight: 600; font-size: 0.9em; margin-bottom: 6px; }
+  .form-row label .opt { color: #999; font-weight: 400; }
+  .form-row textarea, .form-row input[type="text"], .form-row input[type="url"], .form-row select {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 6px; font-size: 0.93em; outline: none; font-family: inherit;
+    transition: border-color 0.2s; resize: vertical;
+  }
+  .form-row textarea:focus, .form-row input:focus { border-color: var(--orange); }
+  .form-row textarea { min-height: 80px; }
+  .form-row .char-hint { font-size: 0.78em; color: #999; text-align: right; margin-top: 4px; }
+  .row-2 { display: flex; gap: 14px; flex-wrap: wrap; }
+  .row-2 .form-row { flex: 1; min-width: 180px; }
+
+  /* Image uploads */
+  .img-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+  .img-slot {
+    width: 120px; height: 120px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-direction: column;
+    font-size: 0.8em;
+    color: #999;
+    background: #fafafa;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .img-slot:hover { border-color: var(--orange); }
+  .img-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .img-slot .remove {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(0,0,0,0.6); color: white;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    font-size: 0.75em; cursor: pointer; z-index: 2;
+  }
+  .img-slot.has-img:hover .remove { display: flex; }
+  .img-slot .icon { font-size: 1.6em; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 24px; border-radius: 6px; font-size: 0.93em;
+    font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--orange); color: #000; }
+  .btn-primary:hover { background: #e88a00; }
+  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+  .btn-outline { background: white; border: 1.5px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: #aaa; }
+  .btn-copy { background: var(--dark); color: white; }
+  .btn-copy:hover { background: #37475A; }
+  .btn-sm { padding: 6px 14px; font-size: 0.82em; }
+
+  /* Results */
+  .result-card {
+    background: white; border-radius: 10px; padding: 28px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05); display: none;
+  }
+  .result-card.show { display: block; }
+  .result-card h3 { font-size: 1.1em; margin-bottom: 14px; color: var(--green); }
+  .result-block {
+    background: #f9fafb; border-radius: 8px; padding: 18px;
+    margin-bottom: 12px; white-space: pre-wrap; font-size: 0.92em; line-height: 1.7;
+  }
+  .result-block.labeled { border-left: 4px solid var(--orange); }
+
+  /* Loading / Error */
+  .loading { display: none; text-align: center; padding: 32px; }
+  .loading.show { display: block; }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid var(--border);
+    border-top-color: var(--orange); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg {
+    background: #ffebee; color: #c62828; padding: 12px 16px;
+    border-radius: 6px; font-size: 0.88em; margin-top: 12px; display: none;
+  }
+  .error-msg.show { display: block; }
+
+  .algo-note {
+    background: #E3F2FD; border-left: 4px solid var(--blue);
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    font-size: 0.85em; margin-bottom: 16px; color: #1565C0;
+  }
+
+  @media (max-width: 768px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+    .sidebar nav { display: flex; overflow-x: auto; }
+    .sidebar nav a { white-space: nowrap; font-size: 0.8em; padding: 10px 12px; }
+    .sidebar .logo, .sidebar .user-info, .sidebar .bottom-links { display: none; }
+    .content { padding: 12px; }
+    .img-slot { width: 80px; height: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>🔐 登录操作台</h2>
+    <p class="sub">输入你的账号密码</p>
+    <input type="text" id="loginUser" placeholder="用户名" autocomplete="username">
+    <input type="password" id="loginPass" placeholder="密码" autocomplete="current-password">
+    <div id="loginError" style="color:var(--red);font-size:0.85em;margin-bottom:10px;display:none;"></div>
+    <button class="btn" onclick="doLogin()">进入操作台</button>
+    <p class="hint" style="margin-bottom:4px;">没有账号？<a href="register.html" style="color:var(--orange);">立即注册</a></p>
+    <p class="hint">需要续费？<a href="membership.html" style="color:var(--orange);">开通/续费会员</a></p>
+  </div>
+</div>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">⚡ Listing 优化操作台</div>
+    <div class="user-info" id="userInfo">已登录</div>
+    <nav>
+      <a href="#" class="active" data-tab="tab-all" onclick="switchTab('tab-all',this)">📦 全Listing优化</a>
+      <a href="#" data-tab="tab-title" onclick="switchTab('tab-title',this)">📝 标题优化</a>
+      <a href="#" data-tab="tab-bullets" onclick="switchTab('tab-bullets',this)">📋 五点优化</a>
+      <a href="#" data-tab="tab-st" onclick="switchTab('tab-st',this)">🔍 后台埋词</a>
+      <a href="#" data-tab="tab-aplus" onclick="switchTab('tab-aplus',this)">🖼 A+页面</a>
+      <a href="#" data-tab="tab-image" onclick="switchTab('tab-image',this)">🩻 图片诊断</a>
+      <a href="#" data-tab="tab-aba" onclick="switchTab('tab-aba',this)">📊 ABA关键词</a>
+      <a href="#" data-tab="tab-compete" onclick="switchTab('tab-compete',this)">🔎 竞品分析</a>
+      <a href="#" data-tab="tab-settings" onclick="switchTab('tab-settings',this)">⚙ 设置</a>
+    </nav>
+    <div class="bottom-links">
+      <a href="listing-optimization-landing.html">← 返回首页</a>
+      <a href="membership.html">💳 开通/续费会员</a>
+      <a href="register.html">📝 注册新账号</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <span id="topbarSub" style="font-size:0.85em;color:var(--sub);"></span>
+      <span class="api-status"><span class="dot on" id="apiDot"></span><span id="apiStatusText">API 已配置</span></span>
+      <span id="topbarUser" style="font-weight:600;font-size:0.9em;"></span>
+      <button class="btn btn-outline btn-sm" onclick="doLogout()">退出</button>
+    </div>
+    <div class="content">
+
+<!-- ============ TAB: 全Listing优化 ============ -->
+<div class="tab-panel active" id="tab-all">
+  <div class="form-card">
+    <h3>📦 全 Listing 优化（一步到位）</h3>
+    <p class="subtitle">输入产品原始信息，AI 基于 A9/A10 算法逻辑一次性输出完整优化方案</p>
+
+    <div class="algo-note">
+      <strong>🔬 算法逻辑驱动：</strong>每个优化建议都基于以下原则——① A9权重从左到右递减 ② 完全匹配搜索词优先级最高 ③ CTR×CVR 复合影响排名 ④ 关键词自然分布避免堆砌惩罚 ⑤ 交叉索引（标题+五点+后台Search Terms）互补覆盖。AI将逐条标注优化依据。
+    </div>
+
+    <div class="form-row"><label>产品图片 <span class="opt">（上传主图和附图，AI 将结合图片内容优化文案）</span></label>
+      <div class="img-grid" id="imgsAll"></div>
+      <div class="char-hint">点击上传（最多9张），用于 AI 视觉分析辅助文案优化</div>
+    </div>
+
+    <div class="form-row"><label>当前标题 <span class="opt">（如已有 Listing）</span></label>
+      <textarea id="all_curTitle" placeholder="粘贴现有标题，AI 将逐字诊断并优化"></textarea></div>
+    <div class="form-row"><label>当前五点描述 <span class="opt">（如已有）</span></label>
+      <textarea id="all_curBullets" rows="3" placeholder="粘贴现有五点描述，每条一行"></textarea></div>
+    <div class="form-row"><label>当前后台 Search Terms <span class="opt">（如已有，帮助AI理解现有覆盖情况）</span></label>
+      <input type="text" id="all_curST" placeholder="粘贴现有后台搜索词"></div>
+
+    <div class="row-2">
+      <div class="form-row"><label>亚马逊类目路径</label><input type="text" id="all_category" placeholder="Kitchen & Dining > Utensils > Colanders"></div>
+      <div class="form-row"><label>品牌名 <span class="opt">（如有）</span></label><input type="text" id="all_brand"></div>
+    </div>
+    <div class="form-row"><label>产品一句话描述（核心功能）</label><input type="text" id="all_function" placeholder="重点说清楚产品是什么、解决什么问题"></div>
+    <div class="row-2">
+      <div class="form-row"><label>材质</label><input type="text" id="all_material"></div>
+      <div class="form-row"><label>尺寸/规格</label><input type="text" id="all_size"></div>
+    </div>
+    <div class="row-2">
+      <div class="form-row"><label>颜色/款式</label><input type="text" id="all_color"></div>
+      <div class="form-row"><label>目标人群</label><input type="text" id="all_audience" placeholder="家庭主妇/租房族/露营爱好者等"></div>
+    </div>
+    <div class="form-row"><label>使用场景（逗号分隔，尽量全面）</label><input type="text" id="all_scenes" placeholder="家庭厨房洗菜、过滤面条、野营户外、房车旅行..."></div>
+    <div class="form-row"><label>核心卖点（2-3个，跟竞品不同的地方）</label><textarea id="all_selling" rows="2" placeholder="每条一行，说明跟竞品比好在哪"></textarea></div>
+    <div class="form-row"><label>竞品常见差评痛点（你要解决的）</label><textarea id="all_pain" rows="2" placeholder="从竞品1-3星差评中提取的高频问题"></textarea></div>
+    <div class="form-row"><label>包装内容/配件/售后</label><input type="text" id="all_package" placeholder="包装清单、质保政策等"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runAll()" id="btnAll">🚀 开始全 Listing 优化</button>
+      <button class="btn btn-outline" onclick="clearTab('all')">清空</button>
+    </div>
+    <div class="loading" id="loadingAll"><div class="spinner"></div><p>AI 深度分析中（含图片视觉分析），预计 60-90 秒...</p></div>
+    <div class="error-msg" id="errorAll"></div>
+  </div>
+  <div class="result-card" id="resultAll">
+    <h3>✅ 完整优化方案</h3>
+    <div class="result-block labeled" id="resultAllContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultAllContent')">📋 一键复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: 标题优化 ============ -->
+<div class="tab-panel" id="tab-title">
+  <div class="form-card">
+    <h3>📝 标题优化</h3>
+    <p class="subtitle">严格按 A9 权重顺序（左重右轻）重写标题，每条优化有算法依据</p>
+    <div class="algo-note"><strong>🔬 A9 标题索引逻辑：</strong>① 前80字符权重最高，核心大词必须在此区间 ② 完全匹配 > 词组匹配 > 模糊匹配 ③ 堆砌关键词触发 Search Suppression ④ 标题CTR影响搜索结果页排名（CTR越高→亚马逊给越多曝光）</div>
+
+    <div class="form-row"><label>参考图片 <span class="opt">（用于理解产品外观）</span></label>
+      <div class="img-grid" id="imgsTitle"></div></div>
+
+    <div class="form-row"><label>当前标题</label><textarea id="title_cur" rows="2" placeholder="粘贴现有标题，AI 诊断问题后优化"></textarea><div class="char-hint"><span id="titleCharCount">0</span> 字符（目标 150-200）</div></div>
+    <div class="row-2">
+      <div class="form-row"><label>类目</label><input type="text" id="title_cat"></div>
+      <div class="form-row"><label>品牌 <span class="opt">（选填）</span></label><input type="text" id="title_brand"></div>
+    </div>
+    <div class="form-row"><label>核心功能</label><input type="text" id="title_func"></div>
+    <div class="row-2">
+      <div class="form-row"><label>材质</label><input type="text" id="title_mat"></div>
+      <div class="form-row"><label>尺寸</label><input type="text" id="title_size"></div>
+    </div>
+    <div class="row-2">
+      <div class="form-row"><label>颜色/款式</label><input type="text" id="title_color"></div>
+      <div class="form-row"><label>场景</label><input type="text" id="title_scene"></div>
+    </div>
+    <div class="form-row"><label>目标关键词（5-8个，按优先级排序）</label><textarea id="title_kw" rows="2" placeholder="collapsible colander, silicone strainer, over sink strainer..."></textarea></div>
+    <div class="form-row"><label>差异化卖点</label><input type="text" id="title_sell"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runTitle()" id="btnTitle">🚀 优化标题</button>
+      <button class="btn btn-outline" onclick="clearTab('title')">清空</button>
+    </div>
+    <div class="loading" id="loadingTitle"><div class="spinner"></div><p>优化中...</p></div>
+    <div class="error-msg" id="errorTitle"></div>
+  </div>
+  <div class="result-card" id="resultTitleCard">
+    <h3>✅ 标题优化结果</h3>
+    <div class="result-block labeled" id="resultTitleContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultTitleContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: 五点优化 ============ -->
+<div class="tab-panel" id="tab-bullets">
+  <div class="form-card">
+    <h3>📋 五点描述优化</h3>
+    <p class="subtitle">每条 Bullet Point 针对一个买家决策疑虑，基于竞品差评反向推导卖点</p>
+    <div class="algo-note"><strong>🔬 A9 五点索引逻辑：</strong>① 五点文本全部被索引参与排名 ② 前2条权重最高（滚动热力图峰值区）③ 移动端仅展示前3条（+点击展开）④ 阅读完成率→转化率→排名形成闭环</div>
+
+    <div class="form-row"><label>最终版标题</label><textarea id="bullets_title" rows="2"></textarea></div>
+    <div class="form-row"><label>当前五点（如已有）</label><textarea id="bullets_cur" rows="4" placeholder="粘贴现有五点，每条一行。AI将诊断每条的问题"></textarea></div>
+    <div class="row-2">
+      <div class="form-row"><label>材质/工艺/认证</label><input type="text" id="bullets_mat"></div>
+      <div class="form-row"><label>尺寸/规格/容量</label><input type="text" id="bullets_size"></div>
+    </div>
+    <div class="form-row"><label>使用场景</label><input type="text" id="bullets_scenes"></div>
+    <div class="form-row"><label>核心卖点（3个，说明跟竞品差异）</label><textarea id="bullets_sell" rows="2"></textarea></div>
+    <div class="form-row"><label>竞品1-3星差评高频问题（你如何解决）</label><textarea id="bullets_pain" rows="3" placeholder="例如：竞品折叠后弹开→你的有锁扣固定&#10;竞品放水槽上滑动→你有防滑吸盘&#10;竞品用久了发黄→你的硅胶通过XX认证"></textarea></div>
+    <div class="form-row"><label>包装/配件/售后</label><input type="text" id="bullets_pkg"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runBullets()" id="btnBullets">🚀 优化五点</button>
+      <button class="btn btn-outline" onclick="clearTab('bullets')">清空</button>
+    </div>
+    <div class="loading" id="loadingBullets"><div class="spinner"></div><p>优化中...</p></div>
+    <div class="error-msg" id="errorBullets"></div>
+  </div>
+  <div class="result-card" id="resultBulletsCard">
+    <h3>✅ 五点优化结果</h3>
+    <div class="result-block labeled" id="resultBulletsContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultBulletsContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: 后台埋词 ============ -->
+<div class="tab-panel" id="tab-st">
+  <div class="form-card">
+    <h3>🔍 后台 Search Terms 埋词</h3>
+    <p class="subtitle">四层关键词策略，与标题五点严格去重，填满250字节</p>
+    <div class="algo-note"><strong>🔬 埋词规则：</strong>① 单复数分别索引，都填 ② 空格分隔省字符 ③ 不填品牌名/ASIN/主观词 ④ 互补原则——标题+五点已覆盖的不要再填 ⑤ 250字节为硬上限</div>
+
+    <div class="form-row"><label>最终版标题</label><textarea id="st_title" rows="2"></textarea></div>
+    <div class="form-row"><label>最终版五点</label><textarea id="st_bullets" rows="5"></textarea></div>
+    <div class="form-row"><label>品类名 + 所有搜索别名</label><input type="text" id="st_aliases" placeholder="colander, strainer, sieve, sifter, draining basket, mesh basket..."></div>
+    <div class="form-row"><label>全部使用场景（英文逗号分隔）</label><textarea id="st_scenes" rows="2" placeholder="kitchen washing, rinsing vegetables, draining pasta, camping cooking, RV kitchen, dorm room, meal prep..."></textarea></div>
+    <div class="form-row"><label>目标人群关键词（英文）</label><input type="text" id="st_audience" placeholder="gift for mom, kitchen essentials, camping gear, small kitchen tools..."></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runST()" id="btnST">🚀 生成埋词方案</button>
+      <button class="btn btn-outline" onclick="clearTab('st')">清空</button>
+    </div>
+    <div class="loading" id="loadingST"><div class="spinner"></div><p>生成中...</p></div>
+    <div class="error-msg" id="errorST"></div>
+  </div>
+  <div class="result-card" id="resultSTCard">
+    <h3>✅ 埋词方案</h3>
+    <div class="result-block labeled" id="resultSTContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultSTContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: A+页面 ============ -->
+<div class="tab-panel" id="tab-aplus">
+  <div class="form-card">
+    <h3>🖼 A+ 页面内容优化</h3>
+    <p class="subtitle">撰写品牌故事+卖点模块文案，并分析你的A+图片质量</p>
+
+    <div class="form-row"><label>当前 A+ 页面图片 <span class="opt">（上传用于AI诊断）</span></label>
+      <div class="img-grid" id="imgsAPlus"></div></div>
+
+    <div class="row-2">
+      <div class="form-row"><label>品牌名</label><input type="text" id="aplus_brand"></div>
+      <div class="form-row"><label>产品名</label><input type="text" id="aplus_name"></div>
+    </div>
+    <div class="form-row"><label>品牌故事 / 理念</label><textarea id="aplus_story" rows="2"></textarea></div>
+    <div class="form-row"><label>4个核心卖点（每个一个A+模块）</label><textarea id="aplus_feat" rows="4" placeholder="每条一行：&#10;1. 卖点标题&#10;2. 卖点标题&#10;3. 卖点标题&#10;4. 卖点标题"></textarea></div>
+    <div class="form-row"><label>每个模块配图说明</label><textarea id="aplus_imgDesc" rows="3" placeholder="例如：模块1-材质特写图 / 模块2-场景使用图..."></textarea></div>
+    <div class="form-row"><label>该品类 Top ASIN 的 A+ 链接 <span class="opt">（用于竞品参考）</span></label><input type="text" id="aplus_ref" placeholder="选填，填入竞品ASIN或链接，AI将参考其结构"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runAPlus()" id="btnAPlus">🚀 生成 A+ 方案</button>
+      <button class="btn btn-outline" onclick="clearTab('aplus')">清空</button>
+    </div>
+    <div class="loading" id="loadingAPlus"><div class="spinner"></div><p>生成中（含图片分析）...</p></div>
+    <div class="error-msg" id="errorAPlus"></div>
+  </div>
+  <div class="result-card" id="resultAPlusCard">
+    <h3>✅ A+ 页面方案</h3>
+    <div class="result-block labeled" id="resultAPlusContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultAPlusContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: 图片诊断 ============ -->
+<div class="tab-panel" id="tab-image">
+  <div class="form-card">
+    <h3>🩻 主图 & A+ 图 AI 诊断</h3>
+    <p class="subtitle">AI 视觉模型分析你的产品图片，对比该类目 Best Seller 的图片规律，给出优化建议</p>
+    <div class="algo-note"><strong>🔬 分析逻辑：</strong>AI 将从以下维度诊断——① 主图是否符合亚马逊白底+占画面85%规则 ② 附图是否覆盖使用场景/尺寸对比/材质细节/包装内容 ③ A+图信息层级是否合理 ④ 对标类目Top10的图片风格和构图规律 ⑤ 移动端缩略图可辨识度</div>
+
+    <div class="form-row"><label>上传需要诊断的图片 <span class="opt">（主图/附图/A+图均可，最多6张）</span></label>
+      <div class="img-grid" id="imgsDiag"></div></div>
+
+    <div class="form-row"><label>产品类目 <span class="opt">（用于对标该类目Best Seller图片标准）</span></label><input type="text" id="diag_cat" placeholder="例如：Kitchen & Dining > Colanders & Strainers"></div>
+    <div class="form-row"><label>补充说明 <span class="opt">（你有什么特别想知道的）</span></label><input type="text" id="diag_note" placeholder="例如：我觉得主图点击率不高，帮我看看怎么改"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runImageDiag()" id="btnDiag">🔍 开始图片诊断</button>
+      <button class="btn btn-outline" onclick="clearTab('diag')">清空</button>
+    </div>
+    <div class="loading" id="loadingDiag"><div class="spinner"></div><p>AI 视觉分析中...</p></div>
+    <div class="error-msg" id="errorDiag"></div>
+  </div>
+  <div class="result-card" id="resultDiagCard">
+    <h3>✅ 图片诊断报告</h3>
+    <div class="result-block labeled" id="resultDiagContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultDiagContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: ABA关键词 ============ -->
+<div class="tab-panel" id="tab-aba">
+  <div class="form-card">
+    <h3>📊 ABA 关键词数据分析</h3>
+    <p class="subtitle">上传 Amazon Brand Analytics 关键词报告，AI 帮你找出高流量低竞争的机会词</p>
+    <div class="algo-note"><strong>🔬 ABA数据利用逻辑：</strong>AI将分析——① 高搜索量+低竞品数的"捡漏词" ② 搜索排名上升趋势词（季节性机会）③ 你的产品应该优先攻哪些词（按投产比排序）④ 哪些词适合放标题 vs 五点 vs 后台</div>
+
+    <div class="form-row"><label>ABA 关键词数据 <span class="opt">（从亚马逊后台ABA报告导出，粘贴CSV或表格数据）</span></label>
+      <textarea id="aba_data" rows="8" placeholder="粘贴ABA关键词报告数据，格式示例：&#10;Search Term, Search Frequency Rank, #1 Click ASIN, #1 Click Share, #2 Click ASIN, #2 Click Share&#10;collapsible colander, 28456, B0XXXX, 18.5%, B0XXXX, 12.3%&#10;silicone strainer, 51234, B0XXXX, 22.1%, B0XXXX, 14.7%&#10;...&#10;&#10;支持：CSV格式 / 制表符分隔 / 直接粘贴表格行"></textarea></div>
+
+    <div class="form-row"><label>你自己的产品 ASIN <span class="opt">（用于对比和机会评估）</span></label><input type="text" id="aba_asin" placeholder="B0XXXXXXXX"></div>
+    <div class="row-2">
+      <div class="form-row"><label>产品类目</label><input type="text" id="aba_cat"></div>
+      <div class="form-row"><label>当前主打关键词</label><input type="text" id="aba_mainKW" placeholder="你现在主攻的词"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runABA()" id="btnABA">📊 分析 ABA 数据</button>
+      <button class="btn btn-outline" onclick="clearTab('aba')">清空</button>
+    </div>
+    <div class="loading" id="loadingABA"><div class="spinner"></div><p>分析关键词数据中...</p></div>
+    <div class="error-msg" id="errorABA"></div>
+  </div>
+  <div class="result-card" id="resultABACard">
+    <h3>✅ ABA 分析报告</h3>
+    <div class="result-block labeled" id="resultABAContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultABAContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: 竞品分析 ============ -->
+<div class="tab-panel" id="tab-compete">
+  <div class="form-card">
+    <h3>🔎 竞品 Listing 反向分析</h3>
+    <p class="subtitle">输入竞品ASIN/链接和关键数据，AI拆解其打法并找出你可以超越的点</p>
+
+    <div class="form-row"><label>竞品 ASIN 或链接 <span class="opt">（最多3个，逗号分隔）</span></label><input type="text" id="comp_asins" placeholder="B0XXXX, B0XXXX"></div>
+    <div class="form-row"><label>竞品标题</label><textarea id="comp_title" rows="2" placeholder="粘贴竞品标题用于拆解分析"></textarea></div>
+    <div class="form-row"><label>竞品五点描述</label><textarea id="comp_bullets" rows="5" placeholder="粘贴竞品五点描述"></textarea></div>
+    <div class="form-row"><label>竞品 1-3 星差评内容 <span class="opt">（越多越好，用于找到攻击点）</span></label><textarea id="comp_reviews" rows="6" placeholder="粘贴竞品的差评内容，重点找高频痛点词。例如：&#10;★☆☆☆☆ The colander keeps tipping over when I put it on the sink...&#10;★★☆☆☆ After 2 months it started to smell weird and got stained..."></textarea></div>
+    <div class="row-2">
+      <div class="form-row"><label>竞品价格</label><input type="text" id="comp_price" placeholder="$19.99"></div>
+      <div class="form-row"><label>竞品评分</label><input type="text" id="comp_rating" placeholder="4.2 / 1280 reviews"></div>
+    </div>
+    <div class="form-row"><label>你自己的产品优势</label><textarea id="comp_myAdv" rows="2" placeholder="我比竞品好的地方：1. ... 2. ... 3. ..."></textarea></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="runCompete()" id="btnCompete">🔎 开始竞品分析</button>
+      <button class="btn btn-outline" onclick="clearTab('comp')">清空</button>
+    </div>
+    <div class="loading" id="loadingCompete"><div class="spinner"></div><p>拆解竞品中...</p></div>
+    <div class="error-msg" id="errorCompete"></div>
+  </div>
+  <div class="result-card" id="resultCompeteCard">
+    <h3>✅ 竞品分析报告</h3>
+    <div class="result-block labeled" id="resultCompeteContent"></div>
+    <button class="btn btn-copy" onclick="copyResult('resultCompeteContent')">📋 复制</button>
+  </div>
+</div>
+
+<!-- ============ TAB: 设置 ============ -->
+<div class="tab-panel" id="tab-settings">
+  <div class="form-card">
+    <h3>⚙ 设置</h3>
+    <div class="form-row"><label>DeepSeek API Key</label><input type="password" id="settingsKey"></div>
+    <div class="form-row"><label>API 地址</label><input type="text" id="settingsUrl" value="https://api.deepseek.com/chat/completions"></div>
+    <div class="form-row">
+      <label>模型选择</label>
+      <select id="settingsModel">
+        <option value="deepseek-chat">deepseek-chat（推荐，支持视觉）</option>
+        <option value="deepseek-reasoner">deepseek-reasoner（深度推理）</option>
+      </select>
+    </div>
+    <div class="form-row"><label>修改登录密码</label><input type="password" id="settingsPass"></div>
+    <button class="btn btn-primary" onclick="saveSettings()">💾 保存设置</button>
+    <div style="background:#FFF8E1;border-left:4px solid var(--orange);padding:12px 16px;border-radius:0 6px 6px 0;margin-top:16px;font-size:0.85em;">
+      <strong>💡 提示：</strong>API Key和密码仅存储在浏览器本地（localStorage），不会上传到任何服务器。
+    </div>
+  </div>
+</div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<script>
+// ============ CONFIG ============
+
+// ============ IMAGE UPLOAD SETUP ============
+const IMG_CONFIG = {
+  imgsAll: { max: 9, label: '产品图' },
+  imgsTitle: { max: 4, label: '参考图' },
+  imgsAPlus: { max: 6, label: 'A+图' },
+  imgsDiag: { max: 6, label: '诊断图' },
+};
+
+Object.entries(IMG_CONFIG).forEach(([containerId, cfg]) => {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  renderImgSlots(container, cfg.max, containerId);
+});
+
+function renderImgSlots(container, max, groupId) {
+  for (let i = 0; i < max; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'img-slot';
+    slot.innerHTML = '<span class="icon">📷</span><span>' + (i === 0 ? '主图' : '+' + i) + '</span><span class="remove">✕</span>';
+    slot.onclick = () => {
+      if (slot.classList.contains('has-img')) return;
+      const input = document.createElement('input');
+      input.type = 'file'; input.accept = 'image/*';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          slot.classList.add('has-img');
+          slot.innerHTML = '<img src="' + ev.target.result + '" alt="">' + slot.querySelector('.remove')?.outerHTML || '<span class="remove">✕</span>';
+          slot.querySelector('.remove').onclick = (ev2) => {
+            ev2.stopPropagation();
+            slot.classList.remove('has-img');
+            slot.innerHTML = '<span class="icon">📷</span><span>' + (i === 0 ? '主图' : '+' + i) + '</span><span class="remove">✕</span>';
+          };
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    };
+    container.appendChild(slot);
+  }
+}
+
+function getImagesBase64(groupId) {
+  const container = document.getElementById(groupId);
+  if (!container) return [];
+  const imgs = [];
+  container.querySelectorAll('.img-slot.has-img img').forEach(img => imgs.push(img.src));
+  return imgs;
+}
+
+// ============ LOGIN ============
+function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value.trim();
+  const errEl = document.getElementById('loginError');
+
+  if (!user || !pass) {
+    errEl.textContent = '请输入用户名和密码';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Check credentials
+  const users = JSON.parse(localStorage.getItem('amz_users') || '{}');
+  const userData = users[user];
+
+  if (!userData || userData.password !== pass) {
+    errEl.textContent = '用户名或密码错误';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Check subscription
+  const now = new Date();
+  const subUntil = userData.subscriptionUntil ? new Date(userData.subscriptionUntil) : null;
+
+  if (!subUntil || subUntil < now) {
+    // Expired or no subscription
+    errEl.innerHTML = '订阅已过期或未开通。请<a href="membership.html" style="color:#FF9900;">续费会员</a>后使用。<br><small>如已续费并获得激活码，请在下方输入激活：</small>';
+    errEl.style.display = 'block';
+    // Show activation input
+    showActivationInput();
+    return;
+  }
+
+  // Valid login
+  localStorage.setItem('amz_current_user', user);
+  localStorage.setItem('amz_logged_in', '1');
+  hideLogin();
+  updateApiDot();
+  updateSubscriptionDisplay(userData);
+}
+
+function showActivationInput() {
+  // Add activation code input to login box if not already there
+  if (document.getElementById('loginActivateCode')) return;
+  const loginBox = document.querySelector('.login-box');
+  const btnEl = loginBox.querySelector('.btn');
+  const div = document.createElement('div');
+  div.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid #eee;';
+  div.innerHTML = `
+    <input type="text" id="loginActivateCode" placeholder="输入激活码 AMZ-..." style="font-family:monospace;font-size:0.88em;">
+    <button class="btn" onclick="activateFromLogin()" style="font-size:0.88em;padding:8px;">激活</button>
+    <p id="loginActivateMsg" style="font-size:0.8em;margin-top:6px;display:none;"></p>
+  `;
+  loginBox.insertBefore(div, btnEl.nextSibling);
+}
+
+const SECRET_SALT = 'amz_op2025_secret_key';
+
+async function activateFromLogin() {
+  const code = document.getElementById('loginActivateCode').value.trim();
+  const msgEl = document.getElementById('loginActivateMsg');
+  const user = document.getElementById('loginUser').value.trim();
+
+  if (!user) {
+    msgEl.textContent = '请先输入用户名';
+    msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
+    return;
+  }
+
+  if (!code.startsWith('AMZ-')) {
+    msgEl.textContent = '激活码格式不正确';
+    msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
+    return;
+  }
+
+  try {
+    const payload = atob(code.replace('AMZ-', ''));
+    const parts = payload.split('|');
+    if (parts.length < 2 || parts[1] !== SECRET_SALT) throw new Error('Invalid');
+    const expiryDate = new Date(parts[0]);
+    if (isNaN(expiryDate.getTime())) throw new Error('Invalid date');
+    if (expiryDate < new Date()) {
+      msgEl.textContent = '激活码已过期（有效期至：' + expiryDate.toLocaleDateString('zh-CN') + '），请联系微信 young_yzd 获取新码';
+      msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('amz_users') || '{}');
+    if (users[user]) {
+      users[user].subscriptionUntil = expiryDate.toISOString();
+      localStorage.setItem('amz_users', JSON.stringify(users));
+    }
+
+    const daysLeft = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+    msgEl.textContent = '✅ 激活成功！剩余' + daysLeft + '天，请重新点击登录';
+    msgEl.style.color = '#4CAF50'; msgEl.style.display = 'block';
+    document.getElementById('loginActivateCode').value = '';
+
+  } catch (e) {
+    msgEl.textContent = '激活码无效，请联系微信 young_yzd';
+    msgEl.style.color = '#e74c3c'; msgEl.style.display = 'block';
+  }
+}
+
+function hideLogin() { document.getElementById('loginOverlay').style.display = 'none'; }
+
+function checkLogin() {
+  const user = localStorage.getItem('amz_current_user');
+  const loggedIn = localStorage.getItem('amz_logged_in');
+
+  if (loggedIn === '1' && user) {
+    const users = JSON.parse(localStorage.getItem('amz_users') || '{}');
+    const userData = users[user];
+    if (userData) {
+      const subUntil = userData.subscriptionUntil ? new Date(userData.subscriptionUntil) : null;
+      if (subUntil && subUntil >= new Date()) {
+        hideLogin();
+        updateApiDot();
+        loadSettings();
+        updateSubscriptionDisplay(userData);
+        return;
+      }
+    }
+  }
+  // Not logged in or expired - show login
+  document.getElementById('loginOverlay').style.display = 'flex';
+}
+
+function doLogout() {
+  localStorage.removeItem('amz_logged_in');
+  document.getElementById('loginOverlay').style.display = 'flex';
+}
+
+function updateSubscriptionDisplay(userData) {
+  const userInfo = document.getElementById('userInfo');
+  const topbarSub = document.getElementById('topbarSub');
+  const topbarUser = document.getElementById('topbarUser');
+  const user = localStorage.getItem('amz_current_user') || '';
+
+  if (topbarUser) topbarUser.textContent = '👤 ' + user;
+
+  if (userData && userData.subscriptionUntil) {
+    const subUntil = new Date(userData.subscriptionUntil);
+    const daysLeft = Math.max(0, Math.ceil((subUntil - new Date()) / (1000 * 60 * 60 * 24)));
+    const status = daysLeft <= 3 ? '⚠️' : '✅';
+    userInfo.textContent = status + ' 订阅剩余 ' + daysLeft + ' 天 | 到期 ' + subUntil.toLocaleDateString('zh-CN');
+    userInfo.style.color = daysLeft <= 3 ? '#ff9800' : 'rgba(255,255,255,0.5)';
+    if (topbarSub) {
+      topbarSub.textContent = status + ' 剩余 ' + daysLeft + ' 天';
+      topbarSub.style.color = daysLeft <= 3 ? '#ff9800' : '#4CAF50';
+    }
+  }
+}
+
+function updateApiDot() {
+  const key = localStorage.getItem('dash_key');
+  const dot = document.getElementById('apiDot');
+  const txt = document.getElementById('apiStatusText');
+  if (key?.startsWith('sk-')) { dot.className = 'dot on'; txt.textContent = 'API 已配置'; }
+  else { dot.className = 'dot off'; txt.textContent = 'API 未配置（请在设置中配置）'; }
+}
+
+// ============ TABS ============
+function switchTab(tabId, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ============ API CALL (supports images) ============
+async function callDeepSeek(systemPrompt, userContent, resultId, loadingId, errorId, imgs = []) {
+  const apiKey = localStorage.getItem('dash_key');
+  const apiUrl = localStorage.getItem('dash_url') || 'https://api.deepseek.com/chat/completions';
+  const model = localStorage.getItem('dash_model') || 'deepseek-chat';
+
+  if (!apiKey?.startsWith('sk-')) {
+    showError(errorId, '请先在「设置」中配置 DeepSeek API Key'); return null;
+  }
+
+  hideError(errorId);
+  showLoading(loadingId, true);
+  const resultCard = document.getElementById(resultId)?.closest('.result-card');
+  if (resultCard) resultCard.classList.remove('show');
+
+  try {
+    const messages = [{ role: 'system', content: systemPrompt }];
+
+    // Build user message (text + optional images)
+    const userParts = [];
+    if (imgs.length > 0) {
+      for (const img of imgs) {
+        userParts.push({
+          type: 'image_url',
+          image_url: { url: img }
+        });
+      }
+    }
+    userParts.push({ type: 'text', text: userContent });
+
+    messages.push({ role: 'user', content: userParts });
+
+    const resp = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 8192 })
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error?.message || 'HTTP ' + resp.status);
+    if (!data.choices?.[0]) throw new Error('API 返回异常');
+
+    const content = data.choices[0].message.content;
+    document.getElementById(resultId).textContent = content;
+    if (resultCard) resultCard.classList.add('show');
+    showLoading(loadingId, false);
+    return content;
+  } catch (err) {
+    showLoading(loadingId, false);
+    showError(errorId, '调用失败：' + err.message);
+    return null;
+  }
+}
+
+// ============ ALL-IN-ONE ============
+async function runAll() {
+  const btn = document.getElementById('btnAll'); btn.disabled = true;
+  const imgs = getImagesBase64('imgsAll');
+
+  const systemP = `你是一名资深亚马逊运营专家，深耕A9/A10算法超过10年。你的每一条优化建议都必须基于亚马逊搜索算法的实际运作逻辑，并标注事实依据。
+
+## 算法原则（你必须严格遵循并在输出中标注依据）
+1. **标题权重递减**：A9从左到右读取标题，前80字符权重最高。核心大词、品类词必须出现在前80字符内。
+2. **完全匹配优先**：买家搜索词与标题关键词完全匹配时排名最高。因此标题必须自然包含精准搜索词。
+3. **CTR→排名回路**：搜索结果页的CTR直接影响该词的排名。标题可读性和吸引力直接影响CTR。
+4. **关键词堆砌惩罚**：亚马逊会检测关键词堆砌（keyword stuffing），过度堆砌会被降权（Search Suppression）。
+5. **交叉索引机制**：标题、五点、后台Search Terms分别被A9索引，三者互补覆盖。标题和五点中已充分覆盖的词不要再放后台。
+6. **五点阅读深度→CVR**：五点阅读完成率影响转化率，转化率影响排名。前3条（移动端可见区）是重中之重。
+7. **差评反向优化**：分析竞品差评中买家最不满意的点，在你的五点中正面展示你如何解决这些问题。
+
+## 输出格式（严格按此结构）
+### 一、标题诊断与优化
+- 当前标题问题诊断（逐条列出）
+- 推荐标题（150-200字符）+ 关键词位置覆盖表
+- 改写依据（每条修改对应哪条算法原则）
+
+### 二、五点描述诊断与优化
+- 当前五点问题诊断
+- 逐条优化后五点（每条附关键词标注和算法依据）
+- 移动端前3条体验评估
+
+### 三、后台Search Terms方案
+- 与标题五点去重后的关键词列表
+- 字节数统计（x/250）
+- 四层关键词分层说明
+- 增量搜索曝光维度预测`;
+
+  const userP = buildUserPrompt('all');
+  await callDeepSeek(systemP, userP, 'resultAllContent', 'loadingAll', 'errorAll', imgs);
+  btn.disabled = false;
+}
+
+// ============ TITLE ============
+async function runTitle() {
+  const btn = document.getElementById('btnTitle'); btn.disabled = true;
+  const imgs = getImagesBase64('imgsTitle');
+
+  const systemP = `你是亚马逊A9搜索引擎优化专家。你必须基于A9算法的实际工作原理来优化标题，每条建议标注算法依据。
+
+## A9标题索引铁律（在输出中引用）
+- **铁律1**：权重从左到右递减，前80字符是黄金位。核心大词必须在前80字符内。
+- **铁律2**：完全匹配搜索词（Exact Match）权重远高于部分匹配。标题中的词必须与买家实际搜索词一致。
+- **铁律3**：关键词堆砌（连续罗列无意义关键词）触发Search Suppression降权。必须用自然句式串联。
+- **铁律4**：标题CTR影响该词在搜索结果页的排名。标题不仅要有关键词，还要让买家有点击欲望。
+- **铁律5**：品牌名在开头有助于品牌词搜索排名（如有注册品牌）。
+- **铁律6**：150-200字符为最优区间，过短覆盖不足，过长稀释权重。
+
+## 输出格式
+1. **当前标题问题诊断**（逐条指出违反哪条铁律）
+2. **推荐标题**（注明每个关键词位置和覆盖的铁律）
+3. **备选标题**
+4. **关键词覆盖与缺失分析**`;
+
+  const userP = buildUserPrompt('title');
+  await callDeepSeek(systemP, userP, 'resultTitleContent', 'loadingTitle', 'errorTitle', imgs);
+  btn.disabled = false;
+}
+
+// ============ BULLETS ============
+async function runBullets() {
+  const btn = document.getElementById('btnBullets'); btn.disabled = true;
+
+  const systemP = `你是亚马逊Listing优化专家，精通A9算法和买家心理学。每条优化必须标注算法和心理学依据。
+
+## 五点优化铁律
+- **铁律1**：前2条权重最高（滚动热力图峰值区）。最核心的卖点和信任建立必须在前2条。
+- **铁律2**：移动端仅展示前3条，+点击展开。前3条必须让买家产生购买意愿。
+- **铁律3**：五点文本被A9索引。每条自然融入1-2个目标关键词。
+- **铁律4**：写"买家得到的好处"不是"产品参数"。Feature→Benefit转化。
+- **铁律5**：每条解决一个买家决策疑虑。第1条解决"这是什么"，第2条解决"质量可靠吗"，第3条解决"能用吗"，第4条解决"在哪用"，第5条解决"还有什么附加价值"。
+- **铁律6**：竞品差评反向攻击。如果竞品差评高频提到某个问题，你的五点必须正面展示你如何解决它。
+- **铁律7**：每条200字符以内。标题帽（全大写卖点词开头）提升扫描效率。
+
+## 输出格式
+逐条输出优化后五点，每条附：
+- 覆盖的关键词
+- 依据哪条铁律
+- 最后附关键词覆盖总表和移动端阅读体验评分`;
+
+  const userP = buildUserPrompt('bullets');
+  await callDeepSeek(systemP, userP, 'resultBulletsContent', 'loadingBullets', 'errorBullets');
+  btn.disabled = false;
+}
+
+// ============ SEARCH TERMS ============
+async function runST() {
+  const btn = document.getElementById('btnST'); btn.disabled = true;
+
+  const systemP = `你是亚马逊Search Terms优化专家。严格按以下规则生成后台关键词。
+
+## 埋词铁律
+- 互补原则：标题和五点已覆盖的词不再填入后台（浪费字节）
+- 空格分隔（不用逗号），不写完整句子
+- 单数复数分别索引，如果字节够都填
+- 四层结构：同义词变体（30%）→长尾场景词（30%）→互补品类词（20%）→错拼/语音搜索词（20%）
+- 不填品牌名、ASIN、主观表述（best/cheap/amazing/new/sale等）
+- 严格不超过250字节
+
+## 输出格式
+1. 推荐Search Terms（纯关键词，空格分隔）
+2. 字节数统计
+3. 与标题/五点去重分析
+4. 四层关键词分层说明
+5. 预计新增搜索曝光维度`;
+
+  const userP = buildUserPrompt('st');
+  await callDeepSeek(systemP, userP, 'resultSTContent', 'loadingST', 'errorST');
+  btn.disabled = false;
+}
+
+// ============ A+ PAGE ============
+async function runAPlus() {
+  const btn = document.getElementById('btnAPlus'); btn.disabled = true;
+  const imgs = getImagesBase64('imgsAPlus');
+
+  const systemP = `你是亚马逊A+页面（增强品牌内容/EBC）设计专家。你必须基于A+的实际作用来撰写文案和图片建议。
+
+## A+页面铁律
+- A+不做关键词索引，但直接影响转化率（CVR）→ 转化率影响搜索排名
+- 每个模块只讲一个卖点，图文高度配合
+- 写"买家得到的好处"，不是罗列参数
+- 移动端A+模块会缩小，文字必须精简（每个模块80-120字）
+- 品牌故事模块建立情感连接，卖点模块建立理性信任
+- 对比模块（如有）：突出你比"普通产品"好在哪，不要点名竞品
+
+## 输出格式
+每个模块：模块名称 + 配图建议（具体描述拍什么、怎么构图）+ 文案（英文为主）
+最后附：A+页面整体转化力评估`;
+
+  const userP = buildUserPrompt('aplus');
+  await callDeepSeek(systemP, userP, 'resultAPlusContent', 'loadingAPlus', 'errorAPlus', imgs);
+  btn.disabled = false;
+}
+
+// ============ IMAGE DIAGNOSIS ============
+async function runImageDiag() {
+  const btn = document.getElementById('btnDiag'); btn.disabled = true;
+  const imgs = getImagesBase64('imgsDiag');
+
+  if (imgs.length === 0) {
+    showError('errorDiag', '请至少上传一张需要诊断的图片');
+    btn.disabled = false;
+    return;
+  }
+
+  const cat = document.getElementById('diag_cat')?.value?.trim() || '';
+  const note = document.getElementById('diag_note')?.value?.trim() || '';
+
+  const systemP = `你是一名专业的亚马逊产品图片审核专家。你将收到产品图片，需要从以下维度进行诊断：
+
+## 诊断维度
+1. **主图合规性**：白底是否纯白(RGB 255,255,255)、产品占比是否≥85%、是否展示完整产品（不裁切）
+2. **附图质量**：是否有使用场景图、尺寸对比图、材质细节图、包装内容图、尺寸说明图
+3. **移动端可辨识度**：在搜索结果页小缩略图状态下，产品是否清晰可辨
+4. **竞品对标**：相对于${cat || '该类目'}的Best Seller图片风格，你的图片差异化够不够、有没有缺失维度
+5. **信息层级**：每张图的视觉焦点是否清晰、文字（如有）是否可读
+
+## 输出格式
+逐张图诊断，每张图输出：
+- 图片用途判断（主图/场景图/细节图等）
+- 问题点（如有）和优化建议
+- 该类目Best Seller常见图片策略对标分析
+${note ? '用户特别关心：' + note : ''}`;
+
+  await callDeepSeek(systemP, '请对以上产品图片进行专业诊断。' + (cat ? '\n该类目：' + cat : ''), 'resultDiagContent', 'loadingDiag', 'errorDiag', imgs);
+  btn.disabled = false;
+}
+
+// ============ ABA KEYWORD ANALYSIS ============
+async function runABA() {
+  const btn = document.getElementById('btnABA'); btn.disabled = true;
+
+  const systemP = `你是亚马逊ABA（Amazon Brand Analytics）关键词分析专家。你会收到用户提供的ABA关键词报告数据，请严格按以下逻辑分析：
+
+## 分析逻辑
+1. **机会词筛选**：搜索频率排名高（数字越小搜索量越大）+ 竞品点击集中度低的词 = 最有价值的捡漏词
+2. **词的分层策略**：
+   - S级（高搜索量+低竞争，搜索频率排名<50000且Top3点击份额分散）：优先放入标题前80字符
+   - A级（高搜索量+中等竞争）：放入标题后段或五点
+   - B级（长尾精准词+低竞争）：放入后台Search Terms
+   - C级（超高竞争，Top3点击份额>60%）：监测观望，暂不主攻
+3. **趋势判断**：识别有上升趋势的潜力词（季节性、新兴需求）
+4. **搜索词-产品匹配度**：哪些词与你产品最相关、转化潜力最大
+
+## 输出格式
+1. 数据总览（共X个词，搜索频率范围，竞争格局概览）
+2. S/A/B/C级关键词分级表
+3. 推荐优先攻打的TOP10关键词（附原因）
+4. 每个推荐词的推荐放置位置（标题/五点/后台Search Terms）
+5. 关键词趋势和季节性提示`;
+
+  const userP = buildUserPrompt('aba');
+  await callDeepSeek(systemP, userP, 'resultABAContent', 'loadingABA', 'errorABA');
+  btn.disabled = false;
+}
+
+// ============ COMPETITOR ANALYSIS ============
+async function runCompete() {
+  const btn = document.getElementById('btnCompete'); btn.disabled = true;
+
+  const systemP = `你是亚马逊竞品拆解专家。请从以下维度深度拆解竞品Listing，找出可以攻击的弱点：
+
+## 拆解维度
+1. **标题拆解**：关键词布局策略、覆盖了哪些词、漏掉了哪些词、权重分配是否合理
+2. **五点拆解**：每条卖点是否够强、是否解决买家核心顾虑、有没有可攻击的薄弱点
+3. **差评挖掘**：高频痛点词统计、买家最不满意的前3个问题、这些问题有没有在你的产品中解决
+4. **价格定位**：竞品的价格带、你的产品能否在价值感上超越
+5. **攻击机会矩阵**：
+   - 竞品的弱点 × 你的优势 = 直接攻击点（写入五点）
+   - 竞品没覆盖的关键词 × 你的产品相关 = 关键词攻击点（写入标题/Search Terms）
+   - 竞品差评集中问题 × 你有解决方案 = 转化率攻击点（写入前2条五点）
+
+## 输出格式
+1. 竞品Listing逐项拆解
+2. 竞品弱点清单（按致命程度排序）
+3. 你的攻击策略（具体哪些词、哪些卖点、怎么写）
+4. 优化后应达到的差异化定位`;
+
+  const userP = buildUserPrompt('comp');
+  await callDeepSeek(systemP, userP, 'resultCompeteContent', 'loadingCompete', 'errorCompete');
+  btn.disabled = false;
+}
+
+// ============ SETTINGS ============
+function saveSettings() {
+  const key = document.getElementById('settingsKey').value.trim();
+  const url = document.getElementById('settingsUrl').value.trim();
+  const model = document.getElementById('settingsModel').value;
+  const pass = document.getElementById('settingsPass').value.trim();
+  if (key) localStorage.setItem('dash_key', key);
+  if (url) localStorage.setItem('dash_url', url);
+  if (model) localStorage.setItem('dash_model', model);
+  if (pass) localStorage.setItem('dash_pass', pass);
+  updateApiDot();
+  alert('设置已保存！');
+}
+
+function loadSettings() {
+  const key = localStorage.getItem('dash_key') || '';
+  const url = localStorage.getItem('dash_url') || 'https://api.deepseek.com/chat/completions';
+  const model = localStorage.getItem('dash_model') || 'deepseek-chat';
+  try { document.getElementById('settingsKey').value = key; } catch(e) {}
+  try { document.getElementById('settingsUrl').value = url; } catch(e) {}
+  try { document.getElementById('settingsModel').value = model; } catch(e) {}
+}
+
+// ============ UTILS ============
+function getVal(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+function buildUserPrompt(prefix) {
+  const map = {
+    all: `请为以下产品生成完整Listing优化方案：
+- 当前标题：${getVal('all_curTitle')}
+- 当前五点：${getVal('all_curBullets')}
+- 当前Search Terms：${getVal('all_curST')}
+- 类目：${getVal('all_category')}
+- 品牌：${getVal('all_brand') || '无'}
+- 核心功能：${getVal('all_function')}
+- 材质：${getVal('all_material')}
+- 尺寸：${getVal('all_size')}
+- 颜色/款式：${getVal('all_color')}
+- 人群：${getVal('all_audience')}
+- 场景：${getVal('all_scenes')}
+- 核心卖点：${getVal('all_selling')}
+- 竞品痛点：${getVal('all_pain')}
+- 包装/售后：${getVal('all_package')}
+${getVal('all_curTitle') ? '\n请先诊断当前标题和五点的问题，再给出优化方案。' : ''}
+${getVal('all_pain') ? '\n重点：分析竞品差评痛点，在五点中针对性地展示你的解决方案。' : ''}`,
+
+    title: `请优化标题：
+- 当前标题：${getVal('title_cur')}
+- 类目：${getVal('title_cat')}
+- 品牌：${getVal('title_brand') || '无'}
+- 核心功能：${getVal('title_func')}
+- 材质：${getVal('title_mat')}
+- 尺寸：${getVal('title_size')}
+- 颜色/款式：${getVal('title_color')}
+- 场景：${getVal('title_scene')}
+- 目标关键词：${getVal('title_kw')}
+- 差异化卖点：${getVal('title_sell')}
+${getVal('title_cur') ? '\n请先逐条诊断当前标题的问题，再给出优化版本。' : ''}`,
+
+    bullets: `请优化五点描述：
+- 产品标题：${getVal('bullets_title')}
+- 当前五点：${getVal('bullets_cur')}
+- 材质/工艺/认证：${getVal('bullets_mat')}
+- 尺寸/规格/容量：${getVal('bullets_size')}
+- 使用场景：${getVal('bullets_scenes')}
+- 核心卖点：${getVal('bullets_sell')}
+- 竞品差评痛点：${getVal('bullets_pain')}
+- 包装/配件/售后：${getVal('bullets_pkg')}
+${getVal('bullets_pain') ? '\n重点：请针对每个竞品差评痛点，在对应的Bullet Point中说明你如何解决。' : ''}`,
+
+    st: `请生成后台Search Terms：
+- 标题（终版）：${getVal('st_title')}
+- 五点（终版）：${getVal('st_bullets')}
+- 搜索别名：${getVal('st_aliases')}
+- 全部使用场景：${getVal('st_scenes')}
+- 目标人群关键词：${getVal('st_audience')}
+请严格与标题和五点做去重分析。`,
+
+    aplus: `请撰写A+页面内容：
+- 品牌名：${getVal('aplus_brand')}
+- 产品名：${getVal('aplus_name')}
+- 品牌故事/理念：${getVal('aplus_story')}
+- 4个核心卖点：${getVal('aplus_feat')}
+- 配图说明：${getVal('aplus_imgDesc')}
+- 竞品A+参考：${getVal('aplus_ref') || '无'}`,
+
+    aba: `请分析以下ABA关键词数据：
+${getVal('aba_data') || '（无数据）'}
+- 我的ASIN：${getVal('aba_asin') || '未提供'}
+- 产品类目：${getVal('aba_cat')}
+- 当前主打关键词：${getVal('aba_mainKW')}
+请找出高流量低竞争的机会词，并按S/A/B/C分级推荐。`,
+
+    comp: `请拆解以下竞品：
+- 竞品ASIN/链接：${getVal('comp_asins')}
+- 竞品标题：${getVal('comp_title')}
+- 竞品五点：${getVal('comp_bullets')}
+- 竞品差评：${getVal('comp_reviews')}
+- 竞品价格：${getVal('comp_price')}
+- 竞品评分：${getVal('comp_rating')}
+- 我自己的优势：${getVal('comp_myAdv')}
+请找出竞品弱点并给出攻击策略。`
+  };
+  return map[prefix] || '';
+}
+
+function clearTab(prefix) {
+  document.querySelectorAll(`[id^="${prefix}_"]`).forEach(el => {
+    if (['TEXTAREA','INPUT','SELECT'].includes(el.tagName)) el.value = '';
+  });
+  // Also clear image slots for this tab
+  const imgMap = { all: 'imgsAll', title: 'imgsTitle', aplus: 'imgsAPlus', diag: 'imgsDiag' };
+  const containerId = imgMap[prefix];
+  if (containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.querySelectorAll('.img-slot.has-img').forEach(slot => {
+        slot.classList.remove('has-img');
+        const i = Array.from(container.children).indexOf(slot);
+        slot.innerHTML = '<span class="icon">📷</span><span>' + (i === 0 ? '主图' : '+' + i) + '</span><span class="remove">✕</span>';
+      });
+    }
+  }
+}
+
+function showLoading(id, show) { document.getElementById(id).classList.toggle('show', show); }
+function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.add('show'); }
+function hideError(id) { document.getElementById(id).classList.remove('show'); }
+
+function copyResult(contentId) {
+  const text = document.getElementById(contentId).textContent;
+  navigator.clipboard.writeText(text).then(() => alert('已复制！')).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = text;
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    alert('已复制！');
+  });
+}
+
+// ============ TITLE CHAR COUNT ============
+const titleCurEl = document.getElementById('title_cur');
+if (titleCurEl) {
+  titleCurEl.addEventListener('input', function() {
+    const el = document.getElementById('titleCharCount');
+    if (el) el.textContent = this.value.length + ' 字符（目标 150-200）';
+  });
+}
+
+// ============ INIT ============
+checkLogin();
+</script>
+</body>
+</html>
