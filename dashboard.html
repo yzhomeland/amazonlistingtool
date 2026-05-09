@@ -7,21 +7,27 @@
 <style>
   :root {
     --orange: #FF9900;
-    --dark: #232F3E;
-    --light: #F5F5F5;
-    --white: #FFFFFF;
-    --text: #333333;
-    --sub: #666666;
-    --border: #E0E0E0;
+    --orange-hover: #e88a00;
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-card: #141414;
+    --bg-card-hover: #1e1e1e;
+    --bg-sidebar: #080808;
+    --bg-input: #1a1a1a;
+    --text-primary: #e8e8e8;
+    --text-secondary: #999999;
+    --border: #2a2a2a;
+    --border-focus: #FF9900;
     --green: #4CAF50;
-    --red: #e74c3c;
-    --blue: #2196F3;
+    --red: #ff5252;
+    --blue: #42a5f5;
+    --shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    color: var(--text);
-    background: var(--light);
+    color: var(--text-primary);
+    background: var(--bg-primary);
     line-height: 1.6;
   }
 
@@ -30,30 +36,30 @@
 
   /* Sidebar */
   .sidebar {
-    width: 230px; background: var(--dark); color: white; flex-shrink: 0;
+    width: 230px; background: var(--bg-sidebar); color: white; flex-shrink: 0;
     display: flex; flex-direction: column;
   }
-  .sidebar .logo { padding: 20px 18px; font-weight: 700; font-size: 1em; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar .logo { padding: 20px 18px; font-weight: 700; font-size: 1em; border-bottom: 1px solid rgba(255,255,255,0.06); }
   .sidebar nav { flex: 1; padding: 8px 0; overflow-y: auto; }
   .sidebar nav a {
     display: flex; align-items: center; gap: 8px; padding: 11px 18px;
-    color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9em;
+    color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.9em;
     transition: all 0.15s; border-left: 3px solid transparent;
   }
   .sidebar nav a:hover { background: rgba(255,255,255,0.05); color: white; }
   .sidebar nav a.active { background: rgba(255,153,0,0.12); color: var(--orange); border-left-color: var(--orange); }
-  .sidebar .bottom-links { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.1); }
-  .sidebar .bottom-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.8em; display: block; margin-bottom: 6px; }
+  .sidebar .bottom-links { padding: 14px 18px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .sidebar .bottom-links a { color: rgba(255,255,255,0.3); text-decoration: none; font-size: 0.8em; display: block; margin-bottom: 6px; }
   .sidebar .bottom-links a:hover { color: white; }
 
   /* Main */
   .main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
   .topbar {
-    background: white; padding: 12px 28px; display: flex;
+    background: var(--bg-card); padding: 12px 28px; display: flex;
     justify-content: flex-end; align-items: center; gap: 14px;
     border-bottom: 1px solid var(--border); font-size: 0.88em;
   }
-  .topbar .api-status { display: flex; align-items: center; gap: 6px; color: var(--sub); }
+  .topbar .api-status { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
   .topbar .dot { width: 8px; height: 8px; border-radius: 50%; }
   .dot.on { background: var(--green); }
   .dot.off { background: var(--red); }
@@ -64,22 +70,23 @@
 
   /* Cards */
   .form-card {
-    background: white; border-radius: 10px; padding: 28px;
-    margin-bottom: 22px; box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    background: var(--bg-card); border-radius: 10px; padding: 28px;
+    margin-bottom: 22px; box-shadow: var(--shadow);
   }
   .form-card h3 { font-size: 1.1em; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-  .form-card .subtitle { color: var(--sub); font-size: 0.85em; margin-bottom: 18px; }
+  .form-card .subtitle { color: var(--text-secondary); font-size: 0.85em; margin-bottom: 18px; }
   .form-row { margin-bottom: 16px; }
-  .form-row label { display: block; font-weight: 600; font-size: 0.9em; margin-bottom: 6px; }
-  .form-row label .opt { color: #999; font-weight: 400; }
-  .form-row textarea, .form-row input[type="text"], .form-row input[type="url"], .form-row select {
+  .form-row label { display: block; font-weight: 600; font-size: 0.9em; margin-bottom: 6px; color: var(--text-primary); }
+  .form-row label .opt { color: var(--text-secondary); font-weight: 400; }
+  .form-row textarea, .form-row input[type="text"], .form-row input[type="url"], .form-row input[type="password"], .form-row select {
     width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
     border-radius: 6px; font-size: 0.93em; outline: none; font-family: inherit;
     transition: border-color 0.2s; resize: vertical;
+    background: var(--bg-input); color: var(--text-primary);
   }
   .form-row textarea:focus, .form-row input:focus { border-color: var(--orange); }
   .form-row textarea { min-height: 80px; }
-  .form-row .char-hint { font-size: 0.78em; color: #999; text-align: right; margin-top: 4px; }
+  .form-row .char-hint { font-size: 0.78em; color: var(--text-secondary); text-align: right; margin-top: 4px; }
   .row-2 { display: flex; gap: 14px; flex-wrap: wrap; }
   .row-2 .form-row { flex: 1; min-width: 180px; }
 
@@ -95,8 +102,8 @@
     cursor: pointer;
     flex-direction: column;
     font-size: 0.8em;
-    color: #999;
-    background: #fafafa;
+    color: var(--text-secondary);
+    background: var(--bg-input);
     transition: border-color 0.2s;
     position: relative;
     overflow: hidden;
@@ -105,7 +112,7 @@
   .img-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
   .img-slot .remove {
     position: absolute; top: 4px; right: 4px;
-    background: rgba(0,0,0,0.6); color: white;
+    background: rgba(255,255,255,0.15); color: var(--text-primary);
     width: 22px; height: 22px; border-radius: 50%;
     display: none; align-items: center; justify-content: center;
     font-size: 0.75em; cursor: pointer; z-index: 2;
@@ -121,29 +128,30 @@
     font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
   }
   .btn-primary { background: var(--orange); color: #000; }
-  .btn-primary:hover { background: #e88a00; }
-  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
-  .btn-outline { background: white; border: 1.5px solid var(--border); color: var(--text); }
-  .btn-outline:hover { border-color: #aaa; }
-  .btn-copy { background: var(--dark); color: white; }
-  .btn-copy:hover { background: #37475A; }
+  .btn-primary:hover { background: var(--orange-hover); }
+  .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; }
+  .btn-outline { background: var(--bg-card); border: 1.5px solid var(--border); color: var(--text-primary); }
+  .btn-outline:hover { border-color: #555; }
+  .btn-copy { background: var(--orange); color: #000; }
+  .btn-copy:hover { background: var(--orange-hover); }
   .btn-sm { padding: 6px 14px; font-size: 0.82em; }
 
   /* Results */
   .result-card {
-    background: white; border-radius: 10px; padding: 28px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.05); display: none;
+    background: var(--bg-card); border-radius: 10px; padding: 28px;
+    box-shadow: var(--shadow); display: none;
   }
   .result-card.show { display: block; }
   .result-card h3 { font-size: 1.1em; margin-bottom: 14px; color: var(--green); }
   .result-block {
-    background: #f9fafb; border-radius: 8px; padding: 18px;
+    background: var(--bg-input); border-radius: 8px; padding: 18px;
     margin-bottom: 12px; white-space: pre-wrap; font-size: 0.92em; line-height: 1.7;
+    color: var(--text-primary);
   }
   .result-block.labeled { border-left: 4px solid var(--orange); }
 
   /* Loading / Error */
-  .loading { display: none; text-align: center; padding: 32px; }
+  .loading { display: none; text-align: center; padding: 32px; color: var(--text-primary); }
   .loading.show { display: block; }
   .spinner {
     width: 36px; height: 36px; border: 3px solid var(--border);
@@ -152,16 +160,20 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .error-msg {
-    background: #ffebee; color: #c62828; padding: 12px 16px;
+    background: rgba(255,82,82,0.1); color: var(--red); padding: 12px 16px;
     border-radius: 6px; font-size: 0.88em; margin-top: 12px; display: none;
   }
   .error-msg.show { display: block; }
 
   .algo-note {
-    background: #E3F2FD; border-left: 4px solid var(--blue);
+    background: rgba(66,165,245,0.08); border-left: 4px solid var(--blue);
     padding: 12px 16px; border-radius: 0 6px 6px 0;
-    font-size: 0.85em; margin-bottom: 16px; color: #1565C0;
+    font-size: 0.85em; margin-bottom: 16px; color: var(--blue);
   }
+
+  .checkbox-group { display: flex; gap: 16px; flex-wrap: wrap; }
+  .cb-label { display: flex; align-items: center; gap: 6px; font-size: 0.9em; cursor: pointer; color: var(--text-primary); }
+  .cb-label input[type="checkbox"] { accent-color: var(--orange); width: 16px; height: 16px; cursor: pointer; }
 
   @media (max-width: 768px) {
     .app { flex-direction: column; }
@@ -243,6 +255,8 @@
     <div class="form-row"><label>核心卖点（2-3个，跟竞品不同的地方）</label><textarea id="all_selling" rows="2" placeholder="每条一行，说明跟竞品比好在哪"></textarea></div>
     <div class="form-row"><label>竞品常见差评痛点（你要解决的）</label><textarea id="all_pain" rows="2" placeholder="从竞品1-3星差评中提取的高频问题"></textarea></div>
     <div class="form-row"><label>包装内容/配件/售后</label><input type="text" id="all_package" placeholder="包装清单、质保政策等"></div>
+    <div class="form-row"><label>竞品品牌名 <span class="opt">（用于合规避让，逗号分隔）</span></label><input type="text" id="all_competitorBrands" placeholder="输入已知竞品品牌名，AI将确保输出中不含这些词"></div>
+    <div class="form-row"><label>目标市场 <span class="opt">（覆盖设置中的默认值）</span></label><input type="text" id="all_marketplaces" placeholder="US, UK, DE（留空则使用设置中的默认值）"></div>
 
     <div class="btn-row">
       <button class="btn btn-primary" onclick="runAll()" id="btnAll">🚀 开始全 Listing 优化</button>
@@ -283,6 +297,7 @@
       <div class="form-row"><label>场景</label><input type="text" id="title_scene"></div>
     </div>
     <div class="form-row"><label>目标关键词（5-8个，按优先级排序）</label><textarea id="title_kw" rows="2" placeholder="collapsible colander, silicone strainer, over sink strainer..."></textarea></div>
+    <div class="form-row"><label>竞品品牌名 <span class="opt">（合规避让）</span></label><input type="text" id="title_competitorBrands" placeholder="逗号分隔，AI不会在标题中使用这些词"></div>
     <div class="form-row"><label>差异化卖点</label><input type="text" id="title_sell"></div>
 
     <div class="btn-row">
@@ -315,6 +330,7 @@
     <div class="form-row"><label>使用场景</label><input type="text" id="bullets_scenes"></div>
     <div class="form-row"><label>核心卖点（3个，说明跟竞品差异）</label><textarea id="bullets_sell" rows="2"></textarea></div>
     <div class="form-row"><label>竞品1-3星差评高频问题（你如何解决）</label><textarea id="bullets_pain" rows="3" placeholder="例如：竞品折叠后弹开→你的有锁扣固定&#10;竞品放水槽上滑动→你有防滑吸盘&#10;竞品用久了发黄→你的硅胶通过XX认证"></textarea></div>
+    <div class="form-row"><label>竞品品牌名 <span class="opt">（合规避让）</span></label><input type="text" id="bullets_competitorBrands" placeholder="逗号分隔，五点中将不出现这些品牌名"></div>
     <div class="form-row"><label>包装/配件/售后</label><input type="text" id="bullets_pkg"></div>
 
     <div class="btn-row">
@@ -343,6 +359,7 @@
     <div class="form-row"><label>品类名 + 所有搜索别名</label><input type="text" id="st_aliases" placeholder="colander, strainer, sieve, sifter, draining basket, mesh basket..."></div>
     <div class="form-row"><label>全部使用场景（英文逗号分隔）</label><textarea id="st_scenes" rows="2" placeholder="kitchen washing, rinsing vegetables, draining pasta, camping cooking, RV kitchen, dorm room, meal prep..."></textarea></div>
     <div class="form-row"><label>目标人群关键词（英文）</label><input type="text" id="st_audience" placeholder="gift for mom, kitchen essentials, camping gear, small kitchen tools..."></div>
+    <div class="form-row"><label>竞品品牌名/商标词 <span class="opt">（必须从埋词中排除）</span></label><input type="text" id="st_excludeTerms" placeholder="这些词绝对不能出现在Search Terms中，逗号分隔"></div>
 
     <div class="btn-row">
       <button class="btn btn-primary" onclick="runST()" id="btnST">🚀 生成埋词方案</button>
@@ -427,6 +444,14 @@
     <div class="form-row"><label>ABA 关键词数据 <span class="opt">（从亚马逊后台ABA报告导出，粘贴CSV或表格数据）</span></label>
       <textarea id="aba_data" rows="8" placeholder="粘贴ABA关键词报告数据，格式示例：&#10;Search Term, Search Frequency Rank, #1 Click ASIN, #1 Click Share, #2 Click ASIN, #2 Click Share&#10;collapsible colander, 28456, B0XXXX, 18.5%, B0XXXX, 12.3%&#10;silicone strainer, 51234, B0XXXX, 22.1%, B0XXXX, 14.7%&#10;...&#10;&#10;支持：CSV格式 / 制表符分隔 / 直接粘贴表格行"></textarea></div>
 
+    <div class="form-row"><label>数据来源站点</label>
+      <select id="aba_marketplace">
+        <option value="US">🇺🇸 美国站</option>
+        <option value="UK">🇬🇧 英国站</option>
+        <option value="DE">🇩🇪 德国站</option>
+        <option value="JP">🇯🇵 日本站</option>
+        <option value="CA">🇨🇦 加拿大站</option>
+      </select></div>
     <div class="form-row"><label>你自己的产品 ASIN <span class="opt">（用于对比和机会评估）</span></label><input type="text" id="aba_asin" placeholder="B0XXXXXXXX"></div>
     <div class="row-2">
       <div class="form-row"><label>产品类目</label><input type="text" id="aba_cat"></div>
@@ -454,6 +479,7 @@
     <p class="subtitle">输入竞品ASIN/链接和关键数据，AI拆解其打法并找出你可以超越的点</p>
 
     <div class="form-row"><label>竞品 ASIN 或链接 <span class="opt">（最多3个，逗号分隔）</span></label><input type="text" id="comp_asins" placeholder="B0XXXX, B0XXXX"></div>
+    <div class="form-row"><label>竞品所在站点 <span class="opt">（与ASIN顺序对应）</span></label><input type="text" id="comp_marketplaces" placeholder="US, UK, DE"></div>
     <div class="form-row"><label>竞品标题</label><textarea id="comp_title" rows="2" placeholder="粘贴竞品标题用于拆解分析"></textarea></div>
     <div class="form-row"><label>竞品五点描述</label><textarea id="comp_bullets" rows="5" placeholder="粘贴竞品五点描述"></textarea></div>
     <div class="form-row"><label>竞品 1-3 星差评内容 <span class="opt">（越多越好，用于找到攻击点）</span></label><textarea id="comp_reviews" rows="6" placeholder="粘贴竞品的差评内容，重点找高频痛点词。例如：&#10;★☆☆☆☆ The colander keeps tipping over when I put it on the sink...&#10;★★☆☆☆ After 2 months it started to smell weird and got stained..."></textarea></div>
@@ -490,9 +516,19 @@
         <option value="deepseek-reasoner">deepseek-reasoner（深度推理）</option>
       </select>
     </div>
+    <div class="form-row">
+      <label>🌍 默认目标市场</label>
+      <div class="checkbox-group" id="settingsMarketplaces">
+        <label class="cb-label"><input type="checkbox" value="US" checked onchange="saveMarketplaces()"> 🇺🇸 美国</label>
+        <label class="cb-label"><input type="checkbox" value="UK" onchange="saveMarketplaces()"> 🇬🇧 英国</label>
+        <label class="cb-label"><input type="checkbox" value="DE" onchange="saveMarketplaces()"> 🇩🇪 德国</label>
+        <label class="cb-label"><input type="checkbox" value="JP" onchange="saveMarketplaces()"> 🇯🇵 日本</label>
+        <label class="cb-label"><input type="checkbox" value="CA" onchange="saveMarketplaces()"> 🇨🇦 加拿大</label>
+      </div>
+    </div>
     <div class="form-row"><label>修改登录密码</label><input type="password" id="settingsPass"></div>
     <button class="btn btn-primary" onclick="saveSettings()">💾 保存设置</button>
-    <div style="background:#FFF8E1;border-left:4px solid var(--orange);padding:12px 16px;border-radius:0 6px 6px 0;margin-top:16px;font-size:0.85em;">
+    <div style="background:rgba(255,153,0,0.08);border-left:4px solid var(--orange);padding:12px 16px;border-radius:0 6px 6px 0;margin-top:16px;font-size:0.85em;color:var(--text-primary);">
       <strong>💡 提示：</strong>API Key和密码仅存储在浏览器本地（localStorage），不会上传到任何服务器。
     </div>
   </div>
@@ -608,7 +644,7 @@ async function callDeepSeek(systemPrompt, userContent, resultId, loadingId, erro
     const resp = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 8192 })
+      body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 16384 })
     });
 
     const data = await resp.json();
@@ -632,33 +668,59 @@ async function runAll() {
   const btn = document.getElementById('btnAll'); btn.disabled = true;
   const imgs = getImagesBase64('imgsAll');
 
-  const systemP = `你是一名资深亚马逊运营专家，深耕A9/A10算法超过10年。你的每一条优化建议都必须基于亚马逊搜索算法的实际运作逻辑，并标注事实依据。
+  const systemP = `你是一名深耕亚马逊A9/A10算法超过10年的多站点运营专家，覆盖美国、英国、德国、日本、加拿大等主要站点。你的每一条优化建议必须基于搜索算法的实际运作逻辑，标注事实依据，并通过合规检查。
 
-## 算法原则（你必须严格遵循并在输出中标注依据）
+## 合规与风险规避（每次优化第一优先级）
+1. **亚马逊受限词扫描**：检查所有输出是否含有禁用词（best, #1, guaranteed, amazing, 100%, perfect, miracle, top rated, best seller, award winning等）。这些词会导致Listing被压制或下架。
+2. **商标/版权风险**：输出中严禁出现竞品品牌名或注册商标。如用户输入中包含竞品品牌，输出中必须用"竞品A""某品牌"等匿名替代。
+3. **图片文字合规**：分析用户上传的产品图片，检查图片中文字是否包含违规声明、竞品商标、未经证实的认证标识。
+4. **跨市场合规差异**：不同站点禁词列表不同。UK/EU站对环保声明（Eco-friendly/Biodegradable等）有严格认证要求。JP站对"最高级"表述（最高/No.1等）更敏感。DE站对技术参数声明要求可验证。
+5. **竞品品牌避让**：用户提供的竞品品牌名及变体拼写，绝对不能出现在任何输出文本中。
+
+## A9/A10算法原则（严格遵循并在输出中标注依据）
 1. **标题权重递减**：A9从左到右读取标题，前80字符权重最高。核心大词、品类词必须出现在前80字符内。
-2. **完全匹配优先**：买家搜索词与标题关键词完全匹配时排名最高。因此标题必须自然包含精准搜索词。
-3. **CTR→排名回路**：搜索结果页的CTR直接影响该词的排名。标题可读性和吸引力直接影响CTR。
-4. **关键词堆砌惩罚**：亚马逊会检测关键词堆砌（keyword stuffing），过度堆砌会被降权（Search Suppression）。
+2. **完全匹配优先**：买家搜索词与标题关键词完全匹配时排名最高。标题必须自然包含精准搜索词，不同站点要考虑区域拼写差异（US: color / UK: colour）。
+3. **CTR→排名回路**：搜索结果页CTR直接影响该词排名。标题可读性和吸引力直接影响CTR。不同站点买家决策心理不同：US买家看卖点差异化，UK买家看社会证明，DE买家看技术参数，JP买家看品质保证。
+4. **关键词堆砌惩罚**：亚马逊检测关键词堆砌（keyword stuffing），过度堆砌会被降权（Search Suppression）。必须用自然句式串联。
 5. **交叉索引机制**：标题、五点、后台Search Terms分别被A9索引，三者互补覆盖。标题和五点中已充分覆盖的词不要再放后台。
-6. **五点阅读深度→CVR**：五点阅读完成率影响转化率，转化率影响排名。前3条（移动端可见区）是重中之重。
+6. **五点阅读深度→CVR**：五点阅读完成率影响转化率，转化率影响排名。前3条（移动端可见区）是重中之重。每条解决买家一个决策疑虑。
 7. **差评反向优化**：分析竞品差评中买家最不满意的点，在你的五点中正面展示你如何解决这些问题。
+8. **跨站点关键词差异**：同一产品在不同站点可能排名不同的搜索词。例如US站"flashlight"在UK站为"torch"。需识别并覆盖区域关键词差异。
+9. **图片-文案一致性**：AI视觉分析产品图片后，图片中可见的特征必须在文案中体现，确保图文一致。
 
 ## 输出格式（严格按此结构）
-### 一、标题诊断与优化
-- 当前标题问题诊断（逐条列出）
+### 一、合规检查报告
+- 受限词扫描结果（标记是否发现违禁词）
+- 竞品品牌名避让确认
+- 图片文字合规检查（如有上传图片）
+- 跨站点合规差异提示
+
+### 二、标题诊断与优化
+- 当前标题问题诊断（逐条列出，标注违反哪条算法原则）
 - 推荐标题（150-200字符）+ 关键词位置覆盖表
 - 改写依据（每条修改对应哪条算法原则）
+- 目标市场标题变体建议（如有多市场）
 
-### 二、五点描述诊断与优化
+### 三、五点描述诊断与优化
 - 当前五点问题诊断
-- 逐条优化后五点（每条附关键词标注和算法依据）
+- 逐条优化后五点（每条附：覆盖关键词 / 算法依据 / 针对的竞品痛点 / 目标市场适用性）
 - 移动端前3条体验评估
+- 跨市场买家心理适配建议
 
-### 三、后台Search Terms方案
+### 四、后台Search Terms方案
 - 与标题五点去重后的关键词列表
 - 字节数统计（x/250）
 - 四层关键词分层说明
-- 增量搜索曝光维度预测`;
+- 跨站点拼写变体覆盖
+- 增量搜索曝光维度预测
+
+### 五、跨市场策略建议
+- 各目标市场的关键词优先级差异
+- 区域性定位建议
+- 跨市场关键词缺口分析
+
+### 六、修改依据汇总表
+对每项修改列出：改了什么 → 基于哪条算法原则 → 预计对排名的量化影响 → 合规确认`;
 
   const userP = buildUserPrompt('all');
   await callDeepSeek(systemP, userP, 'resultAllContent', 'loadingAll', 'errorAll', imgs);
@@ -670,21 +732,29 @@ async function runTitle() {
   const btn = document.getElementById('btnTitle'); btn.disabled = true;
   const imgs = getImagesBase64('imgsTitle');
 
-  const systemP = `你是亚马逊A9搜索引擎优化专家。你必须基于A9算法的实际工作原理来优化标题，每条建议标注算法依据。
+  const systemP = `你是亚马逊A9搜索引擎优化专家，精通多站点标题优化策略。你必须基于A9算法的实际工作原理来优化标题，每条建议标注算法依据，并完成合规检查。
+
+## 合规检查（优先执行）
+1. 扫描标题是否含有亚马逊受限词（best, #1, guaranteed, amazing, perfect, top rated, award winning等）
+2. 检查是否含有竞品品牌名或注册商标——如有必须用匿名方式替代
+3. 检查是否含有未经证实的声明（如"最长使用寿命"等需要数据支撑的表述）
+4. 跨站点合规差异：UK环保声明需认证，JP对"最高"类表述严格限制
 
 ## A9标题索引铁律（在输出中引用）
 - **铁律1**：权重从左到右递减，前80字符是黄金位。核心大词必须在前80字符内。
-- **铁律2**：完全匹配搜索词（Exact Match）权重远高于部分匹配。标题中的词必须与买家实际搜索词一致。
+- **铁律2**：完全匹配搜索词（Exact Match）权重远高于部分匹配。标题中的词必须与买家实际搜索词一致。注意跨站点拼写差异（US: color/UK: colour, US: flashlight/UK: torch）。
 - **铁律3**：关键词堆砌（连续罗列无意义关键词）触发Search Suppression降权。必须用自然句式串联。
-- **铁律4**：标题CTR影响该词在搜索结果页的排名。标题不仅要有关键词，还要让买家有点击欲望。
+- **铁律4**：标题CTR影响该词在搜索结果页的排名。标题不仅要有关键词，还要让买家有点击欲望。不同站点买家心理不同：US重差异化，UK重社会证明，DE重技术参数。
 - **铁律5**：品牌名在开头有助于品牌词搜索排名（如有注册品牌）。
-- **铁律6**：150-200字符为最优区间，过短覆盖不足，过长稀释权重。
+- **铁律6**：150-200字符为最优区间，过短覆盖不足，过长稀释权重。JP站标题结构略有不同，建议品牌+品类+核心属性。
 
 ## 输出格式
-1. **当前标题问题诊断**（逐条指出违反哪条铁律）
-2. **推荐标题**（注明每个关键词位置和覆盖的铁律）
-3. **备选标题**
-4. **关键词覆盖与缺失分析**`;
+1. **合规检查**（受限词扫描结果，竞品品牌避让确认）
+2. **当前标题问题诊断**（逐条指出违反哪条铁律）
+3. **推荐标题**（注明每个关键词位置和覆盖的铁律）
+4. **备选标题**（不同关键词语序方案）
+5. **跨市场变体**（针对目标市场提供关键词差异版本，如适用）
+6. **关键词覆盖与缺失分析**`;
 
   const userP = buildUserPrompt('title');
   await callDeepSeek(systemP, userP, 'resultTitleContent', 'loadingTitle', 'errorTitle', imgs);
@@ -695,7 +765,13 @@ async function runTitle() {
 async function runBullets() {
   const btn = document.getElementById('btnBullets'); btn.disabled = true;
 
-  const systemP = `你是亚马逊Listing优化专家，精通A9算法和买家心理学。每条优化必须标注算法和心理学依据。
+  const systemP = `你是亚马逊Listing优化专家，精通A9算法、多站点买家心理学和合规风险管理。每条优化必须标注算法依据、心理学依据和合规状态。
+
+## 合规检查（优先执行）
+1. 每条Bullet Point扫描亚马逊受限词（best, guaranteed, amazing, 100% satisfaction等）
+2. 严禁出现竞品品牌名或注册商标——如有输入，用匿名方式替代
+3. 检查是否有未经证实的声明（需要数据或认证支撑的表述）
+4. 跨市场合规：UK环保声明需认证，DE技术参数声明需可验证
 
 ## 五点优化铁律
 - **铁律1**：前2条权重最高（滚动热力图峰值区）。最核心的卖点和信任建立必须在前2条。
@@ -705,12 +781,16 @@ async function runBullets() {
 - **铁律5**：每条解决一个买家决策疑虑。第1条解决"这是什么"，第2条解决"质量可靠吗"，第3条解决"能用吗"，第4条解决"在哪用"，第5条解决"还有什么附加价值"。
 - **铁律6**：竞品差评反向攻击。如果竞品差评高频提到某个问题，你的五点必须正面展示你如何解决它。
 - **铁律7**：每条200字符以内。标题帽（全大写卖点词开头）提升扫描效率。
+- **铁律8**（跨市场）：US站买家看重差异化卖点和具体使用场景；UK站买家看重社会证明和生活品质提升；DE站买家看重技术参数、认证和质量检测数据；JP站买家看重品质保证、包装精细度和售后。根据目标市场调整每条侧重点。
 
 ## 输出格式
 逐条输出优化后五点，每条附：
 - 覆盖的关键词
-- 依据哪条铁律
-- 最后附关键词覆盖总表和移动端阅读体验评分`;
+- 依据的铁律编号
+- 解决的竞品痛点（如有）
+- 目标市场适配说明
+- 合规状态（✅ 通过 / ⚠️ 已修改）
+最后附：关键词覆盖总表、移动端阅读体验评分、跨市场适配度评估`;
 
   const userP = buildUserPrompt('bullets');
   await callDeepSeek(systemP, userP, 'resultBulletsContent', 'loadingBullets', 'errorBullets');
@@ -721,22 +801,30 @@ async function runBullets() {
 async function runST() {
   const btn = document.getElementById('btnST'); btn.disabled = true;
 
-  const systemP = `你是亚马逊Search Terms优化专家。严格按以下规则生成后台关键词。
+  const systemP = `你是亚马逊Search Terms优化专家。严格按以下规则生成后台关键词，并执行合规过滤。
+
+## 合规过滤（优先执行）
+1. 绝对不能包含：竞品品牌名、注册商标、亚马逊受限词（best, cheap, amazing, new, sale, guaranteed等）
+2. 用户提供的"排除词列表"必须严格排除——这些词一个都不能出现在输出中
+3. 跨市场合规：UK站注意英式拼写合规词的选用，DE站不要使用未经认证的环保相关词
 
 ## 埋词铁律
 - 互补原则：标题和五点已覆盖的词不再填入后台（浪费字节）
 - 空格分隔（不用逗号），不写完整句子
 - 单数复数分别索引，如果字节够都填
 - 四层结构：同义词变体（30%）→长尾场景词（30%）→互补品类词（20%）→错拼/语音搜索词（20%）
-- 不填品牌名、ASIN、主观表述（best/cheap/amazing/new/sale等）
+- 跨站点拼写变体：如有目标市场，加入区域性拼写差异词（US: color → UK: colour, US: organizer → UK: organiser等），但要计算字节成本
+- 不填品牌名、ASIN、主观表述
 - 严格不超过250字节
 
 ## 输出格式
-1. 推荐Search Terms（纯关键词，空格分隔）
-2. 字节数统计
-3. 与标题/五点去重分析
-4. 四层关键词分层说明
-5. 预计新增搜索曝光维度`;
+1. 合规排除确认（标记已排除的词）
+2. 推荐Search Terms（纯关键词，空格分隔）
+3. 字节数统计（x/250）
+4. 与标题/五点去重分析
+5. 四层关键词分层说明（每层标注覆盖的搜索意图）
+6. 跨站点拼写变体覆盖表（如适用）
+7. 预计新增搜索曝光维度`;
 
   const userP = buildUserPrompt('st');
   await callDeepSeek(systemP, userP, 'resultSTContent', 'loadingST', 'errorST');
@@ -748,7 +836,13 @@ async function runAPlus() {
   const btn = document.getElementById('btnAPlus'); btn.disabled = true;
   const imgs = getImagesBase64('imgsAPlus');
 
-  const systemP = `你是亚马逊A+页面（增强品牌内容/EBC）设计专家。你必须基于A+的实际作用来撰写文案和图片建议。
+  const systemP = `你是亚马逊A+页面（增强品牌内容/EBC）设计专家，精通多站点视觉标准和合规要求。你必须基于A+的实际作用来撰写文案和图片建议。
+
+## 合规检查（优先执行）
+1. **图片文字合规扫描**：分析用户上传的A+图片中的文字，检查是否含有：竞品商标、未经授权的认证标识、亚马逊受限词、不实声明
+2. A+文案中不得出现竞品品牌名——如需要对比，用"普通产品""传统方案"等中性替代
+3. UK/EU站点A+环保声明需要实际认证支撑，不可虚标
+4. JP站点A+对文字密度有要求，不可过度堆砌
 
 ## A+页面铁律
 - A+不做关键词索引，但直接影响转化率（CVR）→ 转化率影响搜索排名
@@ -757,10 +851,15 @@ async function runAPlus() {
 - 移动端A+模块会缩小，文字必须精简（每个模块80-120字）
 - 品牌故事模块建立情感连接，卖点模块建立理性信任
 - 对比模块（如有）：突出你比"普通产品"好在哪，不要点名竞品
+- **跨市场视觉偏好**：US站偏好对比图表+生活场景，DE站偏好技术图解+认证标识，JP站偏好生活方式摄影+包装展示，UK站偏好社会证明+品质细节
 
 ## 输出格式
-每个模块：模块名称 + 配图建议（具体描述拍什么、怎么构图）+ 文案（英文为主）
-最后附：A+页面整体转化力评估`;
+每个模块：
+- 模块名称
+- 配图建议（具体描述拍什么、怎么构图，适配目标市场偏好）
+- 文案（英文为主，标注目标市场适配说明）
+- 图片文字合规检查结果
+最后附：A+页面整体转化力评估、跨市场适配度评分`;
 
   const userP = buildUserPrompt('aplus');
   await callDeepSeek(systemP, userP, 'resultAPlusContent', 'loadingAPlus', 'errorAPlus', imgs);
@@ -781,20 +880,23 @@ async function runImageDiag() {
   const cat = document.getElementById('diag_cat')?.value?.trim() || '';
   const note = document.getElementById('diag_note')?.value?.trim() || '';
 
-  const systemP = `你是一名专业的亚马逊产品图片审核专家。你将收到产品图片，需要从以下维度进行诊断：
+  const systemP = `你是一名专业的亚马逊产品图片审核专家，精通多站点图片标准和合规要求。你将收到产品图片，需要从以下维度进行诊断：
 
 ## 诊断维度
-1. **主图合规性**：白底是否纯白(RGB 255,255,255)、产品占比是否≥85%、是否展示完整产品（不裁切）
-2. **附图质量**：是否有使用场景图、尺寸对比图、材质细节图、包装内容图、尺寸说明图
-3. **移动端可辨识度**：在搜索结果页小缩略图状态下，产品是否清晰可辨
-4. **竞品对标**：相对于${cat || '该类目'}的Best Seller图片风格，你的图片差异化够不够、有没有缺失维度
-5. **信息层级**：每张图的视觉焦点是否清晰、文字（如有）是否可读
+1. **主图合规性**：白底是否纯白(RGB 255,255,255)、产品占比是否≥85%、是否展示完整产品（不裁切）。不同站点差异：US严格要求纯白底，UK/EU允许轻微阴影，JP要求更严格的无文字主图。
+2. **附图质量**：是否有使用场景图、尺寸对比图、材质细节图、包装内容图、尺寸说明图。评估各站点Best Seller常见的附图组合差异。
+3. **移动端可辨识度**：在搜索结果页小缩略图状态下，产品是否清晰可辨。
+4. **竞品对标**：相对于${cat || '该类目'}的Best Seller图片风格，你的图片差异化够不够、有没有缺失维度。分析该类目Top10产品的图片策略规律。
+5. **信息层级**：每张图的视觉焦点是否清晰、文字（如有）是否可读，移动端缩略图能否传达核心卖点。
+6. **图片文字合规**（新增）：检查图片中的文字是否包含——未经授权的商标/品牌名、亚马逊禁用声明词（如'#1 best'等）、未经证实的性能声明（如'lasts 10 years'等）、虚假认证标识。
 
 ## 输出格式
 逐张图诊断，每张图输出：
 - 图片用途判断（主图/场景图/细节图等）
+- 合规检查结果（✅ 通过 / ⚠️ 问题 / ❌ 违规）
 - 问题点（如有）和优化建议
 - 该类目Best Seller常见图片策略对标分析
+- 跨站点图片要求差异提示（如适用）
 ${note ? '用户特别关心：' + note : ''}`;
 
   await callDeepSeek(systemP, '请对以上产品图片进行专业诊断。' + (cat ? '\n该类目：' + cat : ''), 'resultDiagContent', 'loadingDiag', 'errorDiag', imgs);
@@ -805,24 +907,67 @@ ${note ? '用户特别关心：' + note : ''}`;
 async function runABA() {
   const btn = document.getElementById('btnABA'); btn.disabled = true;
 
-  const systemP = `你是亚马逊ABA（Amazon Brand Analytics）关键词分析专家。你会收到用户提供的ABA关键词报告数据，请严格按以下逻辑分析：
+  const systemP = `你是亚马逊ABA（Amazon Brand Analytics）关键词分析专家，精通跨站点关键词策略、转化率分析和竞争格局评估。
 
 ## 分析逻辑
-1. **机会词筛选**：搜索频率排名高（数字越小搜索量越大）+ 竞品点击集中度低的词 = 最有价值的捡漏词
-2. **词的分层策略**：
-   - S级（高搜索量+低竞争，搜索频率排名<50000且Top3点击份额分散）：优先放入标题前80字符
-   - A级（高搜索量+中等竞争）：放入标题后段或五点
-   - B级（长尾精准词+低竞争）：放入后台Search Terms
-   - C级（超高竞争，Top3点击份额>60%）：监测观望，暂不主攻
-3. **趋势判断**：识别有上升趋势的潜力词（季节性、新兴需求）
-4. **搜索词-产品匹配度**：哪些词与你产品最相关、转化潜力最大
+
+### 一、关键词相关性评分
+对每个搜索词评估与产品的相关度（1-10分）：
+- **10分**：精准描述你的产品（品类词+核心属性，如"collapsible silicone colander"）
+- **7-9分**：高度相关（场景词、人群词、功能词，如"over sink strainer for kitchen"）
+- **4-6分**：间接相关（互补品类词、宽泛品类词，如"kitchen accessories"）
+- **1-3分**：弱相关（仅用于拓展曝光，不推荐主攻）
+
+### 二、转化率潜力分析
+基于以下信号评估每个词的转化潜力（1-10分）：
+- 搜索词的具体程度：3+词组合的长尾词转化率通常高于1-2词的宽泛词
+- Top3点击ASIN与你产品的相似度：相似度越高→买家搜索意图越匹配→转化潜力越大
+- 搜索结果页产品均价：高价品表示购买意图更明确（对高单价品类适用）
+- 季节性特征：节日/季节相关词转化窗口有限但窗口期内转化率高
+- 搜索词类型：问题型搜索词（how to fix X）转化率低；购买意图型（X for sale）转化率高
+
+### 三、关键词分级策略
+**S级（立即主攻——放入标题前80字符）**：
+- 搜索频率排名 < 30000（高搜索量）
+- Top3点击份额总和 < 45%（竞争分散，有机会）
+- 相关性评分 ≥ 8（高度匹配你的产品）
+- 转化潜力评分 ≥ 7
+
+**A级（优先布局——放入标题后段或五点前2条）**：
+- 搜索频率排名 < 80000
+- Top3点击份额总和 < 60%
+- 相关性评分 ≥ 6
+
+**B级（长尾补充——放入后台Search Terms）**：
+- 长尾精准词（3+词组合）
+- 相关性评分 ≥ 5
+- 虽然搜索量小但转化率高
+
+**C级（监测观望——暂不主攻）**：
+- Top3点击份额总和 > 65%（垄断词，竞争极激烈）
+- 或搜索频率排名 > 150000（流量过低）
+- 或相关性评分 < 5
+→ 放入监测列表，等待竞争格局变化
+
+### 四、跨站点搜索量对比
+如果提供了多站点或可推断跨站点数据：
+- 同一关键词在不同站点的搜索频率差异
+- 识别"某站点高频、他站点低频"的区域性机会词
+- 区分多站点通用核心词 vs 站点特有长尾词
+- 分析竞品在不同站点的关键词策略差异
+
+### 五、搜索趋势与季节性
+- 识别搜索排名处于上升趋势的潜力词（Emerging keywords）
+- 标注季节性词的活跃时间段和最佳布局窗口
+- 区分稳定流量词（常青）vs 脉冲流量词（节日/事件驱动）
 
 ## 输出格式
-1. 数据总览（共X个词，搜索频率范围，竞争格局概览）
-2. S/A/B/C级关键词分级表
-3. 推荐优先攻打的TOP10关键词（附原因）
-4. 每个推荐词的推荐放置位置（标题/五点/后台Search Terms）
-5. 关键词趋势和季节性提示`;
+1. **数据总览**：总词数、搜索频率范围、竞争格局概览、数据来源站点
+2. **关键词相关性-转化力矩阵**：S/A/B/C分级表，每词附搜索量、竞争度、相关性评分、转化潜力评分、综合得分、推荐放置位置
+3. **TOP10优先攻打关键词**：每词附详细原因（搜索量+竞争度+相关性+转化潜力综合评估）
+4. **跨站点关键词机会对比**：区域机会词和通用核心词分析（如适用）
+5. **关键词趋势/季节性提示**：上升趋势词 + 季节性窗口提醒
+6. **广告投放建议**：哪些词适合SP（Sponsored Products）自动广告、哪些适合手动精准、哪些适合SB（Sponsored Brands）`;
 
   const userP = buildUserPrompt('aba');
   await callDeepSeek(systemP, userP, 'resultABAContent', 'loadingABA', 'errorABA');
@@ -833,23 +978,31 @@ async function runABA() {
 async function runCompete() {
   const btn = document.getElementById('btnCompete'); btn.disabled = true;
 
-  const systemP = `你是亚马逊竞品拆解专家。请从以下维度深度拆解竞品Listing，找出可以攻击的弱点：
+  const systemP = `你是亚马逊竞品拆解专家，精通跨站点竞品分析和合规风险管理。请从以下维度深度拆解竞品Listing，找出可以攻击的弱点：
+
+## 合规与风险规避（优先执行）
+1. **竞品商标识别**：提取竞品标题/五点中可能注册了商标的品牌名和专有词，生成"合规避让词清单"——这些词你绝对不能在自己的Listing中使用。
+2. **竞品合规问题发现**：检查竞品Listing是否存在违规表述（如虚假认证、夸大声明），如有→你可以在合规范围内攻击其不可靠性。
+3. **跨站点商标差异**：同一品牌在不同站点可能注册了不同的商标词，注意区域性差异。
 
 ## 拆解维度
-1. **标题拆解**：关键词布局策略、覆盖了哪些词、漏掉了哪些词、权重分配是否合理
-2. **五点拆解**：每条卖点是否够强、是否解决买家核心顾虑、有没有可攻击的薄弱点
-3. **差评挖掘**：高频痛点词统计、买家最不满意的前3个问题、这些问题有没有在你的产品中解决
-4. **价格定位**：竞品的价格带、你的产品能否在价值感上超越
-5. **攻击机会矩阵**：
-   - 竞品的弱点 × 你的优势 = 直接攻击点（写入五点）
+1. **标题拆解**：关键词布局策略、覆盖了哪些词、漏掉了哪些词、权重分配是否合理、是否使用堆砌技巧
+2. **五点拆解**：每条卖点是否够强、是否解决买家核心顾虑、有没有可攻击的薄弱点、不同站点版本是否有差异化
+3. **差评挖掘**：高频痛点词统计、买家最不满意的前3个问题、这些问题有没有在你的产品中解决、差评中的情感倾向分析
+4. **价格定位**：竞品的价格带、你的产品能否在价值感上超越、跨站点定价策略对比（竞品是否在不同站点有不同定价）
+5. **跨站点竞品发现**：如果竞品在多个站点存在，分析其不同站点的Listing策略差异（定价、关键词侧重、卖点排序），找出竞品未覆盖或覆盖薄弱的站点作为你的先发优势市场
+6. **攻击机会矩阵**：
+   - 竞品的弱点 × 你的优势 = 直接攻击点（写入五点前2条）
    - 竞品没覆盖的关键词 × 你的产品相关 = 关键词攻击点（写入标题/Search Terms）
-   - 竞品差评集中问题 × 你有解决方案 = 转化率攻击点（写入前2条五点）
+   - 竞品差评集中问题 × 你有解决方案 = 转化率攻击点（写入五点第1-2条）
+   - 竞品未覆盖的站点 × 你优先进入 = 市场先发优势
 
 ## 输出格式
-1. 竞品Listing逐项拆解
-2. 竞品弱点清单（按致命程度排序）
-3. 你的攻击策略（具体哪些词、哪些卖点、怎么写）
-4. 优化后应达到的差异化定位`;
+1. **竞品合规扫描报告**（竞品品牌名/商标词避让清单 + 竞品自身合规问题）
+2. **竞品Listing逐项拆解**（标题关键词布局、五点卖点分析、A+策略评估）
+3. **竞品弱点清单**（按致命程度排序，标注可攻击性和适用的站点）
+4. **攻击策略矩阵**（关键词攻击 + 卖点攻击 + 转化率攻击 + 站点先发攻击）
+5. **差异化定位建议**（优化后应达到的差异化定位，分站点说明）`;
 
   const userP = buildUserPrompt('comp');
   await callDeepSeek(systemP, userP, 'resultCompeteContent', 'loadingCompete', 'errorCompete');
@@ -866,6 +1019,7 @@ function saveSettings() {
   if (url) localStorage.setItem('dash_url', url);
   if (model) localStorage.setItem('dash_model', model);
   if (pass) localStorage.setItem('dash_pass', pass);
+  saveMarketplaces();
   updateApiDot();
   alert('设置已保存！');
 }
@@ -877,6 +1031,26 @@ function loadSettings() {
   try { document.getElementById('settingsKey').value = key; } catch(e) {}
   try { document.getElementById('settingsUrl').value = url; } catch(e) {}
   try { document.getElementById('settingsModel').value = model; } catch(e) {}
+  loadMarketplaces();
+}
+
+function saveMarketplaces() {
+  const checked = [];
+  document.querySelectorAll('#settingsMarketplaces input:checked').forEach(cb => checked.push(cb.value));
+  localStorage.setItem('dash_marketplaces', JSON.stringify(checked));
+}
+
+function loadMarketplaces() {
+  const saved = localStorage.getItem('dash_marketplaces');
+  const markets = saved ? JSON.parse(saved) : ['US'];
+  document.querySelectorAll('#settingsMarketplaces input').forEach(cb => {
+    cb.checked = markets.includes(cb.value);
+  });
+}
+
+function getMarketplaces() {
+  const saved = localStorage.getItem('dash_marketplaces');
+  return saved ? JSON.parse(saved).join(', ') : 'US';
 }
 
 // ============ UTILS ============
@@ -885,6 +1059,10 @@ function getVal(id) { return document.getElementById(id)?.value?.trim() || ''; }
 function buildUserPrompt(prefix) {
   const map = {
     all: `请为以下产品生成完整Listing优化方案：
+
+【合规避让品牌】：${getVal('all_competitorBrands') || '未提供'}
+【目标市场】：${getVal('all_marketplaces') || getMarketplaces()}
+
 - 当前标题：${getVal('all_curTitle')}
 - 当前五点：${getVal('all_curBullets')}
 - 当前Search Terms：${getVal('all_curST')}
@@ -900,9 +1078,12 @@ function buildUserPrompt(prefix) {
 - 竞品痛点：${getVal('all_pain')}
 - 包装/售后：${getVal('all_package')}
 ${getVal('all_curTitle') ? '\n请先诊断当前标题和五点的问题，再给出优化方案。' : ''}
-${getVal('all_pain') ? '\n重点：分析竞品差评痛点，在五点中针对性地展示你的解决方案。' : ''}`,
+${getVal('all_pain') ? '\n重点：分析竞品差评痛点，在五点中针对性地展示你的解决方案。' : ''}
+${getVal('all_competitorBrands') ? '\n【重要】确保输出中不含以上竞品品牌名，涉及时用"竞品X"匿名替代。' : ''}`,
 
     title: `请优化标题：
+【合规避让品牌】：${getVal('title_competitorBrands') || '未提供'}
+【目标市场】：${getMarketplaces()}
 - 当前标题：${getVal('title_cur')}
 - 类目：${getVal('title_cat')}
 - 品牌：${getVal('title_brand') || '无'}
@@ -913,9 +1094,12 @@ ${getVal('all_pain') ? '\n重点：分析竞品差评痛点，在五点中针对
 - 场景：${getVal('title_scene')}
 - 目标关键词：${getVal('title_kw')}
 - 差异化卖点：${getVal('title_sell')}
-${getVal('title_cur') ? '\n请先逐条诊断当前标题的问题，再给出优化版本。' : ''}`,
+${getVal('title_cur') ? '\n请先逐条诊断当前标题的问题，再给出优化版本。' : ''}
+${getVal('title_competitorBrands') ? '\n【重要】确保标题中不含以上竞品品牌名。' : ''}`,
 
     bullets: `请优化五点描述：
+【合规避让品牌】：${getVal('bullets_competitorBrands') || '未提供'}
+【目标市场】：${getMarketplaces()}
 - 产品标题：${getVal('bullets_title')}
 - 当前五点：${getVal('bullets_cur')}
 - 材质/工艺/认证：${getVal('bullets_mat')}
@@ -924,32 +1108,41 @@ ${getVal('title_cur') ? '\n请先逐条诊断当前标题的问题，再给出�
 - 核心卖点：${getVal('bullets_sell')}
 - 竞品差评痛点：${getVal('bullets_pain')}
 - 包装/配件/售后：${getVal('bullets_pkg')}
-${getVal('bullets_pain') ? '\n重点：请针对每个竞品差评痛点，在对应的Bullet Point中说明你如何解决。' : ''}`,
+${getVal('bullets_pain') ? '\n重点：请针对每个竞品差评痛点，在对应的Bullet Point中说明你如何解决。' : ''}
+${getVal('bullets_competitorBrands') ? '\n【重要】五点描述中不得出现以上竞品品牌名。' : ''}`,
 
     st: `请生成后台Search Terms：
+【排除词（严禁出现）】：${getVal('st_excludeTerms') || '无'}
+【目标市场】：${getMarketplaces()}
 - 标题（终版）：${getVal('st_title')}
 - 五点（终版）：${getVal('st_bullets')}
 - 搜索别名：${getVal('st_aliases')}
 - 全部使用场景：${getVal('st_scenes')}
 - 目标人群关键词：${getVal('st_audience')}
-请严格与标题和五点做去重分析。`,
+请严格与标题和五点做去重分析。
+${getVal('st_excludeTerms') ? '\n【重要】Search Terms中绝对不能包含以上排除词（竞品品牌名/商标词）。' : ''}`,
 
     aplus: `请撰写A+页面内容：
+【目标市场】：${getMarketplaces()}
 - 品牌名：${getVal('aplus_brand')}
 - 产品名：${getVal('aplus_name')}
 - 品牌故事/理念：${getVal('aplus_story')}
 - 4个核心卖点：${getVal('aplus_feat')}
 - 配图说明：${getVal('aplus_imgDesc')}
-- 竞品A+参考：${getVal('aplus_ref') || '无'}`,
+- 竞品A+参考：${getVal('aplus_ref') || '无'}
+请检查配图中的文字合规性，确保不含竞品商标或违规声明。`,
 
     aba: `请分析以下ABA关键词数据：
+【数据来源站点】：${getVal('aba_marketplace') || 'US'}
 ${getVal('aba_data') || '（无数据）'}
 - 我的ASIN：${getVal('aba_asin') || '未提供'}
 - 产品类目：${getVal('aba_cat')}
 - 当前主打关键词：${getVal('aba_mainKW')}
-请找出高流量低竞争的机会词，并按S/A/B/C分级推荐。`,
+请按相关性评分、转化率潜力、竞争度进行S/A/B/C分级推荐。`,
 
     comp: `请拆解以下竞品：
+【竞品所在站点】：${getVal('comp_marketplaces') || getMarketplaces()}
+【我的目标市场】：${getMarketplaces()}
 - 竞品ASIN/链接：${getVal('comp_asins')}
 - 竞品标题：${getVal('comp_title')}
 - 竞品五点：${getVal('comp_bullets')}
@@ -957,7 +1150,7 @@ ${getVal('aba_data') || '（无数据）'}
 - 竞品价格：${getVal('comp_price')}
 - 竞品评分：${getVal('comp_rating')}
 - 我自己的优势：${getVal('comp_myAdv')}
-请找出竞品弱点并给出攻击策略。`
+请找出竞品弱点并给出攻击策略，同时生成合规避让词清单（竞品品牌名/商标词）。`
   };
   return map[prefix] || '';
 }
